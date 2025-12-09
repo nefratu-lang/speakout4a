@@ -20,7 +20,7 @@ export const SLIDES: SlideData[] = [
     content: {
       images: [
         { 
-          src: "barbaros_statue.jpg", 
+          src: ".barbaros_statue.jpg", 
           label: "Statue in Beşiktaş" 
         },
         { 
