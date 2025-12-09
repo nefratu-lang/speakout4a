@@ -9,7 +9,7 @@ export const SLIDES: SlideData[] = [
     title: "LEGENDS OF THE OTTOMAN SEAS",
     subtitle: "Unit 4A - Naval History & Past Simple",
     content: {
-      backgroundImage: "barbaros_cover.jpg"
+      backgroundImage: "./barbaros_cover.jpg"
     }
   },
   {
@@ -20,19 +20,19 @@ export const SLIDES: SlideData[] = [
     content: {
       images: [
         { 
-          src: "barbaros_statue.jpg", 
+          src: "./barbaros_statue.jpg", 
           label: "Statue in Beşiktaş" 
         },
         { 
-          src: "ottoman_galleon.jpg", 
+          src: "./ottoman_galleon.jpg", 
           label: "Ottoman Galley (Kadırga)" 
         },
         { 
-          src: "karamursel_ferry.jpg", 
+          src: "./karamursel_ferry.jpg", 
           label: "Karamürsel (Ferry/Town)" 
         },
         { 
-          src: "preveza_battle.jpg", 
+          src: "./preveza_battle.jpg", 
           label: "Sea Battle (Preveza)" 
         }
       ],
@@ -102,7 +102,7 @@ export const SLIDES: SlideData[] = [
     title: "Legends of the Ottoman Seas",
     subtitle: "Read about the commanders.",
     content: {
-      audioSrc: "reading_audio.mp3",
+      audioSrc: "./reading_audio.mp3",
       text: `Barbaros Hayreddin Paşa was one of the most famous admirals in Ottoman history. He was born on the island of Lesbos, and he was a successful sailor from a young age. He was brave, experienced, and loyal to the Ottoman Empire. He was active in the Mediterranean Sea, and he was famous for protecting Ottoman ports and ships. Many European countries were afraid of him because his navy was strong and fast.
 
 Karamürsel Bey was another important name in early Ottoman naval history. He was the first Kapudan-ı Derya, or “Grand Admiral,” of the Ottoman Empire. He was active in the 14th century, and he was one of the first to organize an Ottoman navy. He was connected to the region of Kocaeli, and the modern town “Karamürsel” was named after him. In his time, shipbuilding and training sailors were very important.
@@ -495,55 +495,55 @@ Both commanders were leaders of different centuries, but they were similar in on
       items: [
         { 
           type: "image", 
-          src: "barbaros_statue.jpg", 
+          src: "./barbaros_statue.jpg", 
           caption: "Statue of Barbaros (Istanbul)",
           description: "This is a statue of Barbaros. It is in Beşiktaş. He was a famous admiral."
         },
         { 
           type: "image", 
-          src: "piri_reis_map.jpg", 
+          src: "./piri_reis_map.jpg", 
           caption: "Piri Reis Map",
           description: "This is the Piri Reis map. It was very detailed. Piri Reis was a clever cartographer."
         },
         { 
           type: "image", 
-          src: "ottoman_galleon.jpg", 
+          src: "./ottoman_galleon.jpg", 
           caption: "Ottoman Galleon",
           description: "This is an Ottoman galleon. It was a big ship. The navy was strong."
         },
         { 
           type: "image", 
-          src: "nigari_portrait.jpg", 
+          src: "./nigari_portrait.jpg", 
           caption: "Portrait by Nigari",
           description: "This is a painting of Barbaros. He was old in this picture. He was powerful."
         },
         { 
           type: "image", 
-          src: "preveza_battle.jpg", 
+          src: "./preveza_battle.jpg", 
           caption: "Battle of Preveza",
           description: "This was the Battle of Preveza. It was in 1538. It was a great victory."
         },
         { 
           type: "image", 
-          src: "ottoman_sailors.jpg", 
+          src: "./ottoman_sailors.jpg", 
           caption: "Ottoman Sailors",
           description: "These were Ottoman sailors. They were brave. Their clothes were traditional."
         },
         { 
           type: "image", 
-          src: "naval_miniature.jpg", 
+          src: "./naval_miniature.jpg", 
           caption: "Naval Miniature",
           description: "This is an old miniature. It was a style of art. The ships were colorful."
         },
         { 
           type: "image", 
-          src: "turgut_reis.jpg", 
+          src: "./turgut_reis.jpg", 
           caption: "Turgut Reis",
           description: "This was Turgut Reis. He was also a famous commander. He was a friend of Barbaros."
         },
         { 
           type: "image", 
-          src: "america_map.jpg", 
+          src: "./america_map.jpg", 
           caption: "Map of America (Piri Reis)",
           description: "This was a map of America. It was very interesting. Piri Reis was the drawer."
         },
