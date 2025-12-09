@@ -493,16 +493,66 @@ Both commanders were leaders of different centuries, but they were similar in on
     subtitle: "Visual & Video Context",
     content: {
       items: [
-        { type: "image", src: "barbaros_statue.jpg", caption: "Statue of Barbaros (Istanbul)" },
-        { type: "image", src: "piri_reis_map.jpg", caption: "Piri Reis Map" },
-        { type: "image", src: "ottoman_galleon.jpg", caption: "Ottoman Galleon" },
-        { type: "image", src: "nigari_portrait.jpg", caption: "Portrait by Nigari" },
-        { type: "image", src: "preveza_battle.jpg", caption: "Battle of Preveza" },
-        { type: "image", src: "ottoman_sailors.jpg", caption: "Ottoman Sailors" },
-        { type: "image", src: "naval_miniature.jpg", caption: "Naval Miniature" },
-        { type: "image", src: "turgut_reis.jpg", caption: "Turgut Reis" },
-        { type: "image", src: "america_map.jpg", caption: "Map of America (Piri Reis)" },
-        { type: "video", src: "https://www.youtube.com/watch?v=fXTqw4MAG5U", caption: "Barbaroslar Akdeniz'in Kılıcı (YouTube)" }
+        { 
+          type: "image", 
+          src: "barbaros_statue.jpg", 
+          caption: "Statue of Barbaros (Istanbul)",
+          description: "This is a statue of Barbaros. It is in Beşiktaş. He was a famous admiral."
+        },
+        { 
+          type: "image", 
+          src: "piri_reis_map.jpg", 
+          caption: "Piri Reis Map",
+          description: "This is the Piri Reis map. It was very detailed. Piri Reis was a clever cartographer."
+        },
+        { 
+          type: "image", 
+          src: "ottoman_galleon.jpg", 
+          caption: "Ottoman Galleon",
+          description: "This is an Ottoman galleon. It was a big ship. The navy was strong."
+        },
+        { 
+          type: "image", 
+          src: "nigari_portrait.jpg", 
+          caption: "Portrait by Nigari",
+          description: "This is a painting of Barbaros. He was old in this picture. He was powerful."
+        },
+        { 
+          type: "image", 
+          src: "preveza_battle.jpg", 
+          caption: "Battle of Preveza",
+          description: "This was the Battle of Preveza. It was in 1538. It was a great victory."
+        },
+        { 
+          type: "image", 
+          src: "ottoman_sailors.jpg", 
+          caption: "Ottoman Sailors",
+          description: "These were Ottoman sailors. They were brave. Their clothes were traditional."
+        },
+        { 
+          type: "image", 
+          src: "naval_miniature.jpg", 
+          caption: "Naval Miniature",
+          description: "This is an old miniature. It was a style of art. The ships were colorful."
+        },
+        { 
+          type: "image", 
+          src: "turgut_reis.jpg", 
+          caption: "Turgut Reis",
+          description: "This was Turgut Reis. He was also a famous commander. He was a friend of Barbaros."
+        },
+        { 
+          type: "image", 
+          src: "america_map.jpg", 
+          caption: "Map of America (Piri Reis)",
+          description: "This was a map of America. It was very interesting. Piri Reis was the drawer."
+        },
+        { 
+          type: "video", 
+          src: "https://www.youtube.com/watch?v=fXTqw4MAG5U", 
+          caption: "Barbaroslar Akdeniz'in Kılıcı (YouTube)",
+          description: "This is a video about Barbaros. He was a legend of the seas."
+        }
       ]
     }
   }

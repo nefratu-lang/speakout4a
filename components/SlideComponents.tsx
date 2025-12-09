@@ -811,10 +811,24 @@ export const MediaSlide: React.FC<{ data: SlideData }> = ({ data }) => {
            ) : (
              <img src={activeItem.src} alt={activeItem.caption} className="w-full h-full object-contain" />
            )}
+           
+           {/* TEXT OVERLAY (Caption + Description) */}
            {activeItem.type !== 'video' && (
-             <div className="absolute bottom-0 left-0 right-0 bg-black/70 text-white p-4 text-center backdrop-blur-md">
-               <p className="text-xl font-serif">{activeItem.caption}</p>
+             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent pt-12 pb-6 px-6 text-center text-white backdrop-blur-sm transition-all">
+               <h3 className="text-2xl font-serif font-bold text-gold-500 mb-2 drop-shadow-md">{activeItem.caption}</h3>
+               {activeItem.description && (
+                   <p className="text-lg md:text-xl font-light leading-relaxed max-w-4xl mx-auto drop-shadow-sm">{activeItem.description}</p>
+               )}
              </div>
+           )}
+           
+           {/* Video Description (Outside iframe overlay for better UX) */}
+           {activeItem.type === 'video' && activeItem.description && (
+              <div className="absolute bottom-12 left-0 right-0 pointer-events-none flex justify-center">
+                  <div className="bg-black/70 backdrop-blur-md px-6 py-3 rounded-full text-white text-lg font-light mb-4 border border-white/20">
+                      {activeItem.description}
+                  </div>
+              </div>
            )}
          </div>
          
