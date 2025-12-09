@@ -1,5 +1,8 @@
 import { SlideType, SlideData, QuestionTF, QuestionMC, GrammarItem, DrillItem, GrammarBankSection } from './types';
 
+// Asset Imports yerine doğrudan string kullanıyoruz.
+// Dosyaların (jpg, mp3) index.html ile aynı klasörde olduğundan emin olun.
+
 export const LESSON_TITLE = "Unit 4A – Legends of the Ottoman Seas";
 
 export const SLIDES: SlideData[] = [
