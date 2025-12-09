@@ -1,21 +1,23 @@
 import { SlideType, SlideData, QuestionTF, QuestionMC, GrammarItem, DrillItem, GrammarBankSection } from './types';
 
-// Asset paths
-// Dosyaların (jpg, mp3) index.html ile aynı kök dizinde olduğunu varsayıyoruz.
-// Import kullanmak tarayıcı ortamında hata verdiği için string path kullanıyoruz.
+// ÖNEMLİ NOT / IMPORTANT NOTE:
+// 1. Proje kök dizininde 'public' adında bir klasör oluşturun.
+// 2. Tüm resim (.jpg) ve ses (.mp3) dosyalarını bu 'public' klasörünün içine taşıyın.
+// 3. Vercel veya Vite kullanırken statik dosyaların 'public' klasöründe olması gerekir.
+// Dosya yollarının başına '/' koyarak public klasöründen okunmasını sağlıyoruz.
 
-const coverImg = './barbaros_cover.jpg';
-const barbarosStatue = './barbaros_statue.jpg';
-const ottomanGalleon = './ottoman_galleon.jpg';
-const karamurselFerry = './karamursel_ferry.jpg';
-const prevezaBattle = './preveza_battle.jpg';
-const readingAudio = './reading_audio.mp3';
-const piriReisMap = './piri_reis_map.jpg';
-const nigariPortrait = './nigari_portrait.jpg';
-const ottomanSailors = './ottoman_sailors.jpg';
-const navalMiniature = './naval_miniature.jpg';
-const turgutReis = './turgut_reis.jpg';
-const americaMap = './america_map.jpg';
+const coverImg = '/barbaros_cover.jpg';
+const barbarosStatue = '/barbaros_statue.jpg';
+const ottomanGalleon = '/ottoman_galleon.jpg';
+const karamurselFerry = '/karamursel_ferry.jpg';
+const prevezaBattle = '/preveza_battle.jpg';
+const readingAudio = '/reading_audio.mp3';
+const piriReisMap = '/piri_reis_map.jpg';
+const nigariPortrait = '/nigari_portrait.jpg';
+const ottomanSailors = '/ottoman_sailors.jpg';
+const navalMiniature = '/naval_miniature.jpg';
+const turgutReis = '/turgut_reis.jpg';
+const americaMap = '/america_map.jpg';
 
 export const LESSON_TITLE = "Unit 4A – Legends of the Ottoman Seas";
 
