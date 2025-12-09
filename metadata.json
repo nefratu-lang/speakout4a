@@ -1,0 +1,7 @@
+{
+  "name": "Ottoman Legends - A2 English",
+  "description": "Interactive English learning slides focusing on the past simple of 'be' and Ottoman Naval History.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
