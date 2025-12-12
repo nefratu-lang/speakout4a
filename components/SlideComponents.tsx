@@ -37,6 +37,128 @@ export const CoverSlide: React.FC<{ data: SlideData }> = ({ data }) => {
   );
 };
 
+// --- LEARNING OUTCOMES SLIDE (NEW) ---
+export const LearningOutcomesSlide: React.FC<{ data: SlideData }> = ({ data }) => {
+  return (
+    <div className="h-full flex flex-col items-center p-4 overflow-y-auto">
+      <div className="max-w-[1600px] w-full flex flex-col gap-6 h-full justify-center">
+        
+        {/* Header Section */}
+        <div className="text-center mb-6">
+           <h2 className="text-4xl font-serif font-bold text-ocean-900 tracking-wider uppercase mb-2">
+             <span className="mr-3">🗺️</span> {data.title}
+           </h2>
+           <p className="text-xl text-slate-600 font-light italic">{data.subtitle}</p>
+        </div>
+
+        {/* Objectives Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {data.content.objectives.map((obj: any, idx: number) => (
+             <div key={idx} className="bg-white rounded-2xl p-6 shadow-xl border-t-4 border-ocean-500 hover:transform hover:-translate-y-1 transition-all duration-300">
+                <div className="bg-ocean-50 w-16 h-16 rounded-full flex items-center justify-center text-3xl mb-4 shadow-inner mx-auto">
+                  {obj.icon}
+                </div>
+                <h3 className="text-xl font-bold text-ocean-800 mb-2 text-center">{obj.title}</h3>
+                <p className="text-slate-600 text-center leading-relaxed">{obj.text}</p>
+             </div>
+          ))}
+        </div>
+
+        {/* Why Box */}
+        {data.content.whyBox && (
+          <div className="mt-8 bg-gold-500 text-white p-8 rounded-3xl shadow-lg relative overflow-hidden max-w-4xl mx-auto w-full">
+            <div className="absolute top-0 right-0 opacity-10 transform translate-x-10 -translate-y-10">
+               <svg className="w-64 h-64" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z"/></svg>
+            </div>
+            <div className="relative z-10 text-center">
+               <h3 className="text-2xl font-bold mb-3 uppercase tracking-widest">{data.content.whyBox.title}</h3>
+               <p className="text-xl font-medium">{data.content.whyBox.text}</p>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// --- REFLECTION SLIDE (NEW) ---
+export const ReflectionSlide: React.FC<{ data: SlideData }> = ({ data }) => {
+  const [checks, setChecks] = useState<Record<number, boolean>>({});
+
+  const toggleCheck = (id: number) => {
+    setChecks(prev => ({...prev, [id]: !prev[id]}));
+  };
+
+  return (
+    <div className="h-full flex flex-col items-center justify-center p-4 bg-gradient-to-b from-ocean-50 to-ocean-100">
+      <div className="max-w-4xl w-full bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-ocean-200">
+        
+        {/* Header */}
+        <div className="bg-ocean-800 text-white p-8 text-center relative overflow-hidden">
+           <div className="absolute top-0 left-0 w-full h-full opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+           <h2 className="text-4xl font-serif font-bold relative z-10 mb-2">{data.title}</h2>
+           <p className="text-ocean-200 uppercase tracking-widest text-sm relative z-10">{data.subtitle}</p>
+        </div>
+
+        <div className="p-8 md:p-12">
+          
+          {/* Recap Section */}
+          <div className="mb-10">
+             <h3 className="text-2xl font-bold text-ocean-900 mb-6 flex items-center gap-2 border-b border-ocean-100 pb-2">
+               <span>📋</span> Mission Accomplished:
+             </h3>
+             <ul className="space-y-4">
+                {data.content.recap.map((item: any, idx: number) => (
+                   <li key={idx} className="flex items-center gap-4 text-lg text-slate-700 bg-slate-50 p-4 rounded-xl">
+                      <span className="w-8 h-8 bg-green-100 text-green-600 rounded-full flex items-center justify-center font-bold shrink-0">✓</span>
+                      {item.text}
+                   </li>
+                ))}
+             </ul>
+          </div>
+
+          {/* Self Check Section */}
+          <div>
+             <h3 className="text-2xl font-bold text-ocean-900 mb-6 flex items-center gap-2 border-b border-ocean-100 pb-2">
+               <span>🤔</span> Self Reflection:
+             </h3>
+             <div className="space-y-3">
+               {data.content.selfCheck.map((check: any) => (
+                 <button 
+                   key={check.id}
+                   onClick={() => toggleCheck(check.id)}
+                   className={`w-full text-left p-4 rounded-xl border-2 transition-all flex items-center justify-between group ${
+                     checks[check.id] 
+                       ? 'bg-gold-50 border-gold-400 shadow-md' 
+                       : 'bg-white border-slate-200 hover:border-ocean-300'
+                   }`}
+                 >
+                   <span className={`text-lg font-medium ${checks[check.id] ? 'text-gold-700' : 'text-slate-600'}`}>
+                     {check.text}
+                   </span>
+                   <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center transition-colors ${
+                      checks[check.id] ? 'bg-gold-500 border-gold-500 text-white' : 'border-slate-300 text-transparent'
+                   }`}>
+                      ★
+                   </div>
+                 </button>
+               ))}
+             </div>
+          </div>
+
+          {/* Final Message */}
+          <div className="mt-10 text-center animate-bounce">
+             <span className="inline-block bg-ocean-600 text-white px-6 py-2 rounded-full font-bold shadow-lg">
+                {data.content.finalMessage}
+             </span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // --- Ice Breaker (Updated for Full Screen & Hints) ---
 export const IceBreakerSlide: React.FC<{ data: SlideData }> = ({ data }) => {
   const [zoomedImg, setZoomedImg] = useState<string | null>(null);
