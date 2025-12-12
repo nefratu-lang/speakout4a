@@ -967,14 +967,16 @@ export const GrammarBankSlide: React.FC<{ data: SlideData }> = ({ data }) => {
    const checkAll = () => setChecked(true);
 
    return (
-      <div className="h-full flex flex-col items-center p-4 overflow-y-auto bg-[#f8f9fa]">
-         <div className="max-w-5xl w-full bg-white shadow-2xl rounded-xl overflow-hidden my-auto border border-slate-200">
-            <div className="bg-ocean-800 text-white p-6">
+      <div className="h-full flex flex-col items-center p-2 md:p-6 bg-[#f8f9fa]">
+         <div className="max-w-5xl w-full bg-white shadow-2xl rounded-xl overflow-hidden border border-slate-200 flex flex-col h-full">
+            {/* Header - Fixed */}
+            <div className="bg-ocean-800 text-white p-6 shrink-0">
                <h2 className="text-2xl font-bold">{data.title}</h2>
                <p className="opacity-80">{data.subtitle}</p>
             </div>
             
-            <div className="p-8 space-y-10">
+            {/* Scrollable Body */}
+            <div className="p-8 space-y-10 flex-1 overflow-y-auto custom-scrollbar">
                {data.content.sections.map((section: GrammarBankSection) => (
                   <div key={section.id}>
                      <h3 className="text-xl font-bold text-ocean-700 mb-2 border-b border-ocean-100 pb-1">{section.title}</h3>
@@ -1017,7 +1019,8 @@ export const GrammarBankSlide: React.FC<{ data: SlideData }> = ({ data }) => {
                ))}
             </div>
 
-            <div className="p-6 bg-slate-50 border-t border-slate-200 flex justify-center">
+            {/* Footer - Fixed */}
+            <div className="p-6 bg-slate-50 border-t border-slate-200 flex justify-center shrink-0">
                <button 
                   onClick={checkAll}
                   className="bg-ocean-600 text-white px-10 py-3 rounded-full font-bold text-lg hover:bg-ocean-700 shadow-md transition-transform active:scale-95"
