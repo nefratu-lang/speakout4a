@@ -7,33 +7,40 @@ import { generateSpeech } from '../services/geminiService';
 const ReadingReferenceModal: React.FC<{ 
   isOpen: boolean; 
   onClose: () => void; 
-  highlightSentences: string[]; 
-}> = ({ isOpen, onClose, highlightSentences }) => {
+  highlightData: { text: string; id: number }[]; // Updated interface to include Question ID
+}> = ({ isOpen, onClose, highlightData }) => {
   if (!isOpen) return null;
 
-  // We assume Slide index 3 (id 3) is the Reading Slide.
-  // In constants array, it's at index 3 (id 3). Safe enough for this specific app structure.
   const readingSlide = SLIDES.find(s => s.type === 'READING');
   if (!readingSlide) return null;
 
   const fullText = readingSlide.content.text;
-  
-  // Simple paragraph split for display
   const paragraphs = fullText.split(/\n\s*\n/);
 
   const renderTextWithHighlights = (text: string) => {
-    // If no highlights needed, return plain text
-    if (!highlightSentences || highlightSentences.length === 0) return text;
+    if (!highlightData || highlightData.length === 0) return text;
 
-    // This is a basic highlighter. It checks if the paragraph contains the key sentence.
-    // Since we are not doing complex NLP, we'll try to match substrings.
     let rendered = text;
-    highlightSentences.forEach(sentence => {
-        if (!sentence) return;
-        // Escape special regex chars if any (simple approach)
-        const parts = rendered.split(sentence);
-        if (parts.length > 1) {
-            rendered = parts.join(`<span class="bg-yellow-200 font-bold px-1 rounded transition-colors duration-500 border-b-2 border-yellow-400 text-ocean-900">${sentence}</span>`);
+    
+    // Sort highlights by length (descending) to prevent replacing substrings incorrectly if one sentence contains another
+    const sortedHighlights = [...highlightData].sort((a, b) => b.text.length - a.text.length);
+
+    sortedHighlights.forEach(item => {
+        if (!item.text) return;
+        // Check if matching text exists in this paragraph
+        if (rendered.includes(item.text)) {
+             // Create a unique placeholder or handle replacement carefully. 
+             // Since we use split/join, we simply wrap the text.
+             const parts = rendered.split(item.text);
+             if (parts.length > 1) {
+                // Badge for Question Number (e.g., Q1)
+                const badge = `<span class="inline-flex items-center justify-center bg-ocean-800 text-white text-[10px] font-bold px-1.5 h-5 rounded-md mr-1 align-middle transform -translate-y-0.5 shadow-sm border border-ocean-600 select-none">Q${item.id}</span>`;
+                // Highlighted Text Wrapper
+                const highlightedText = `<span class="bg-yellow-200 text-ocean-900 px-1 rounded box-decoration-clone border-b-2 border-yellow-400 font-medium transition-all">${badge}${item.text}</span>`;
+                
+                // Reassemble
+                rendered = parts.join(highlightedText);
+             }
         }
     });
     
@@ -64,7 +71,7 @@ const ReadingReferenceModal: React.FC<{
             
             {/* Footer Tip */}
             <div className="bg-yellow-50 p-3 text-center text-sm text-yellow-800 border-t border-yellow-200">
-                💡 Answers you found are highlighted in yellow.
+                💡 Answers you found are marked with <span className="bg-ocean-800 text-white text-[10px] px-1 rounded mx-1">Q#</span> and highlighted in yellow.
             </div>
         </div>
     </div>
@@ -536,10 +543,10 @@ export const ComprehensionTFSlide: React.FC<{ data: SlideData }> = ({ data }) =>
     setAnswers(prev => ({ ...prev, [qId]: val === correct }));
   };
 
-  // Collect highlighted sentences based on answered questions
-  const highlights = data.content.questions
+  // Collect highlighted sentences WITH Question IDs
+  const highlightData = data.content.questions
     .filter((q: QuestionTF) => answers[q.id] !== undefined && q.relatedSentence)
-    .map((q: QuestionTF) => q.relatedSentence!);
+    .map((q: QuestionTF) => ({ text: q.relatedSentence!, id: q.id }));
 
   return (
     // REMOVED 'justify-center' to prevent top clipping on overflow
@@ -568,8 +575,11 @@ export const ComprehensionTFSlide: React.FC<{ data: SlideData }> = ({ data }) =>
             return (
               <div key={q.id} className="relative">
                 <div className={`flex flex-col md:flex-row items-center justify-between p-4 rounded-2xl transition-all border-2 ${status === true ? 'bg-green-50 border-green-200' : status === false ? 'bg-red-50 border-red-200' : 'bg-slate-50 border-slate-100 hover:border-ocean-200'}`}>
-                  <p className="text-lg md:text-xl font-medium text-slate-700 mb-3 md:mb-0 md:mr-4 flex-1">{q.statement}</p>
-                  <div className="flex gap-3 shrink-0">
+                  <div className="flex-1 md:mr-4 flex gap-3">
+                      <span className="font-bold text-ocean-500 bg-ocean-50 w-8 h-8 flex items-center justify-center rounded-full shrink-0 border border-ocean-100">{q.id}</span>
+                      <p className="text-lg md:text-xl font-medium text-slate-700 pt-0.5">{q.statement}</p>
+                  </div>
+                  <div className="flex gap-3 shrink-0 mt-3 md:mt-0 ml-11 md:ml-0">
                     <button onClick={() => handleAnswer(q.id, true, q.isTrue)} disabled={status !== undefined} className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${status === undefined ? 'bg-white border border-slate-300 hover:bg-ocean-50 hover:border-ocean-400' : (q.isTrue ? 'bg-green-600 text-white' : 'opacity-20')}`}>True</button>
                     <button onClick={() => handleAnswer(q.id, false, q.isTrue)} disabled={status !== undefined} className={`px-8 py-3 rounded-xl font-bold text-lg transition-all ${status === undefined ? 'bg-white border border-slate-300 hover:bg-ocean-50 hover:border-ocean-400' : (!q.isTrue ? 'bg-green-600 text-white' : 'opacity-20')}`}>False</button>
                   </div>
@@ -577,7 +587,7 @@ export const ComprehensionTFSlide: React.FC<{ data: SlideData }> = ({ data }) =>
                 
                 {/* Explanation Bubble */}
                 {status !== undefined && (
-                   <div className={`mt-2 p-3 rounded-xl text-base font-medium flex items-center gap-2 animate-in slide-in-from-top-2 ${status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                   <div className={`mt-2 ml-11 md:ml-0 p-3 rounded-xl text-base font-medium flex items-center gap-2 animate-in slide-in-from-top-2 ${status ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                       <span className="text-xl">{status ? '✅' : '❌'}</span>
                       {q.explanation}
                    </div>
@@ -591,7 +601,7 @@ export const ComprehensionTFSlide: React.FC<{ data: SlideData }> = ({ data }) =>
       <ReadingReferenceModal 
         isOpen={showReading} 
         onClose={() => setShowReading(false)} 
-        highlightSentences={highlights} 
+        highlightData={highlightData} 
       />
     </div>
   );
@@ -617,9 +627,9 @@ export const ComprehensionMCSlide: React.FC<{ data: SlideData }> = ({ data }) =>
   };
 
   // Collect highlighted sentences based on answered questions
-  const highlights = data.content.questions
+  const highlightData = data.content.questions
   .filter((q: QuestionMC) => selections[q.id] !== undefined && q.relatedSentence)
-  .map((q: QuestionMC) => q.relatedSentence!);
+  .map((q: QuestionMC) => ({ text: q.relatedSentence!, id: q.id }));
 
 
   return (
@@ -649,7 +659,10 @@ export const ComprehensionMCSlide: React.FC<{ data: SlideData }> = ({ data }) =>
                   <div key={q.id} className="bg-ocean-50 rounded-2xl shadow-xl overflow-hidden flex flex-col border border-ocean-200 hover:shadow-2xl transition-shadow duration-300">
                      {/* Card Header */}
                      <div className="bg-ocean-100 p-4 border-b border-ocean-200 flex items-start gap-3">
-                        <span className="text-3xl bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-sm shrink-0">{getIcon(q.iconType)}</span>
+                        <div className="relative">
+                           <span className="text-3xl bg-white rounded-full w-12 h-12 flex items-center justify-center shadow-sm shrink-0">{getIcon(q.iconType)}</span>
+                           <span className="absolute -top-1 -right-1 bg-ocean-600 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full border border-white">Q{q.id}</span>
+                        </div>
                         <h4 className="text-ocean-900 font-bold text-lg md:text-xl leading-tight mt-1">{q.question}</h4>
                      </div>
 
@@ -697,7 +710,7 @@ export const ComprehensionMCSlide: React.FC<{ data: SlideData }> = ({ data }) =>
       <ReadingReferenceModal 
         isOpen={showReading} 
         onClose={() => setShowReading(false)} 
-        highlightSentences={highlights} 
+        highlightData={highlightData} 
       />
     </div>
   );
@@ -713,8 +726,8 @@ export const GrammarSlide: React.FC<{ data: SlideData }> = ({ data }) => {
 
   // For grammar slide, usually we check all at once.
   // So we will highlight ALL related sentences ONLY IF 'checked' is true.
-  const highlights = checked 
-    ? data.content.items.filter((i: GrammarItem) => i.relatedSentence).map((i: GrammarItem) => i.relatedSentence!)
+  const highlightData = checked 
+    ? data.content.items.filter((i: GrammarItem) => i.relatedSentence).map((i: GrammarItem) => ({ text: i.relatedSentence!, id: i.id }))
     : [];
 
   return (
@@ -749,7 +762,7 @@ export const GrammarSlide: React.FC<{ data: SlideData }> = ({ data }) => {
              
              return (
                <div key={item.id} className="flex flex-wrap items-center text-xl md:text-2xl border-b border-slate-100 pb-2">
-                 <span className="text-slate-400 font-bold text-base mr-4 w-6">{item.id}.</span>
+                 <span className="text-ocean-500 font-bold text-base mr-4 w-6">Q{item.id}.</span>
                  <span className="text-slate-800 mr-2">{item.prefix}</span>
                  <div className="relative inline-block mx-1">
                    <input
@@ -788,83 +801,90 @@ export const GrammarSlide: React.FC<{ data: SlideData }> = ({ data }) => {
       <ReadingReferenceModal 
         isOpen={showReading} 
         onClose={() => setShowReading(false)} 
-        highlightSentences={highlights} 
+        highlightData={highlightData} 
       />
     </div>
   );
 };
 
-// --- Speaking ---
+// --- Speaking Slide ---
 export const SpeakingSlide: React.FC<{ data: SlideData }> = ({ data }) => {
+  const [activePrompt, setActivePrompt] = useState<number | null>(null);
+
   return (
-    <div className="h-full flex flex-col items-center p-4 overflow-y-auto">
-      <div className="max-w-[1600px] w-full flex flex-col gap-6 h-full">
+    <div className="h-full flex flex-col p-4 overflow-y-auto bg-slate-50">
+      <div className="max-w-6xl w-full mx-auto my-auto flex flex-col gap-6">
         
-        {/* Grammar Tip Card */}
-        {data.content.grammarTip && (
-           <div className="bg-white rounded-3xl shadow-lg border border-ocean-100 overflow-hidden shrink-0">
-              <div className="bg-ocean-600 text-white p-3 text-center">
-                 <h3 className="text-lg font-bold uppercase tracking-wider">{data.content.grammarTip.title}</h3>
-              </div>
-              <div className="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                 <div className="bg-green-50 rounded-xl p-3 border border-green-100">
-                    <h4 className="text-green-800 font-bold mb-2 border-b border-green-200 pb-1">{data.content.grammarTip.positive.title}</h4>
-                    <ul className="text-sm font-mono text-slate-700 space-y-1">
-                      {data.content.grammarTip.positive.examples.map((ex: string, i: number) => <li key={i}>{ex}</li>)}
+        {/* Header */}
+        <div className="text-center mb-4">
+           <h2 className="text-3xl font-bold text-ocean-900">{data.title}</h2>
+           <p className="text-slate-600">{data.subtitle}</p>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+           {/* Grammar Rules Box */}
+           <div className="bg-white p-6 rounded-2xl shadow-lg border border-ocean-100">
+              <h3 className="text-xl font-bold text-ocean-800 mb-4 border-b pb-2">{data.content.grammarTip.title}</h3>
+              
+              <div className="space-y-4">
+                 <div className="bg-green-50 p-3 rounded-lg border border-green-100">
+                    <h4 className="font-bold text-green-800 text-sm mb-1">{data.content.grammarTip.positive.title}</h4>
+                    <ul className="text-sm text-green-700 list-disc list-inside">
+                       {data.content.grammarTip.positive.examples.map((ex: string, i: number) => <li key={i}>{ex}</li>)}
                     </ul>
                  </div>
-                 <div className="bg-red-50 rounded-xl p-3 border border-red-100">
-                    <h4 className="text-red-800 font-bold mb-2 border-b border-red-200 pb-1">{data.content.grammarTip.negative.title}</h4>
-                    <ul className="text-sm font-mono text-slate-700 space-y-1">
-                      {data.content.grammarTip.negative.examples.map((ex: string, i: number) => <li key={i}>{ex}</li>)}
+
+                 <div className="bg-red-50 p-3 rounded-lg border border-red-100">
+                    <h4 className="font-bold text-red-800 text-sm mb-1">{data.content.grammarTip.negative.title}</h4>
+                    <ul className="text-sm text-red-700 list-disc list-inside">
+                       {data.content.grammarTip.negative.examples.map((ex: string, i: number) => <li key={i}>{ex}</li>)}
                     </ul>
                  </div>
-                 <div className="bg-blue-50 rounded-xl p-3 border border-blue-100">
-                    <h4 className="text-blue-800 font-bold mb-2 border-b border-blue-200 pb-1">{data.content.grammarTip.question.title}</h4>
-                    <ul className="text-sm font-mono text-slate-700 space-y-1">
-                      {data.content.grammarTip.question.examples.map((ex: string, i: number) => <li key={i}>{ex}</li>)}
+
+                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <h4 className="font-bold text-blue-800 text-sm mb-1">{data.content.grammarTip.question.title}</h4>
+                    <ul className="text-sm text-blue-700 list-disc list-inside">
+                       {data.content.grammarTip.question.examples.map((ex: string, i: number) => <li key={i}>{ex}</li>)}
                     </ul>
                  </div>
-                 <div className="bg-yellow-50 rounded-xl p-3 border border-yellow-100">
-                    <h4 className="text-yellow-800 font-bold mb-2 border-b border-yellow-200 pb-1">{data.content.grammarTip.timeExpressions.title}</h4>
-                    <div className="flex flex-wrap gap-2">
-                       {data.content.grammarTip.timeExpressions.list.map((item: string, i: number) => (
-                         <span key={i} className="text-xs bg-white px-2 py-1 rounded border border-yellow-200 text-slate-600 shadow-sm">{item}</span>
+                 
+                 <div className="bg-yellow-50 p-3 rounded-lg border border-yellow-100">
+                    <h4 className="font-bold text-yellow-800 text-sm mb-1">{data.content.grammarTip.timeExpressions.title}</h4>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                       {data.content.grammarTip.timeExpressions.list.map((ex: string, i: number) => (
+                          <span key={i} className="text-xs bg-white px-2 py-1 rounded border border-yellow-200 text-yellow-800">{ex}</span>
                        ))}
                     </div>
                  </div>
               </div>
            </div>
-        )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1 min-h-0">
-          <div className="bg-white p-6 rounded-3xl shadow-lg border border-ocean-100 flex flex-col h-full overflow-y-auto">
-            <h3 className="text-2xl font-bold text-ocean-800 mb-4 flex items-center gap-2">
-              <span>❓</span> Ask your partner:
-            </h3>
-            <ul className="space-y-4 flex-1">
-              {data.content.prompts.map((p: string, i: number) => (
-                <li key={i} className="flex items-start gap-3 text-lg md:text-xl text-slate-700 bg-slate-50 p-3 rounded-lg">
-                  <span className="text-ocean-500 font-bold mt-0.5 shrink-0">Q:</span>
-                  {p}
-                </li>
-              ))}
-            </ul>
-          </div>
-          <div className="bg-ocean-800 text-white p-6 rounded-3xl shadow-lg relative overflow-hidden flex flex-col h-full overflow-y-auto">
-            <div className="absolute top-0 right-0 w-48 h-48 bg-ocean-700 rounded-full -mr-12 -mt-12 opacity-50"></div>
-            <h3 className="text-2xl font-bold mb-4 text-ocean-100 relative z-10 flex items-center gap-2">
-               <span>💬</span> Answer examples:
-            </h3>
-            <div className="space-y-4 relative z-10 flex-1">
-              {data.content.examples.map((ex: string, i: number) => (
-                <div key={i} className="flex gap-3 items-start">
-                  <span className="text-gold-500 font-bold mt-0.5 shrink-0 text-xl">A:</span>
-                  <p className="text-lg md:text-xl italic text-ocean-50">"{ex}"</p>
-                </div>
-              ))}
-            </div>
-          </div>
+           {/* Speaking Practice */}
+           <div className="bg-white p-6 rounded-2xl shadow-lg border border-ocean-100 flex flex-col">
+              <h3 className="text-xl font-bold text-ocean-800 mb-4 flex items-center gap-2">
+                 <span>🗣️</span> Your Turn
+              </h3>
+              <p className="text-slate-600 mb-4 text-sm">Click a question to see an example answer.</p>
+              
+              <div className="space-y-3 flex-1 overflow-y-auto max-h-[500px] pr-2 custom-scrollbar">
+                 {data.content.prompts.map((prompt: string, idx: number) => (
+                    <div key={idx} className="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden">
+                       <button 
+                         onClick={() => setActivePrompt(activePrompt === idx ? null : idx)}
+                         className="w-full text-left p-4 hover:bg-ocean-50 transition-colors font-medium text-slate-800 flex justify-between items-center"
+                       >
+                          <span>{prompt}</span>
+                          <span className="text-ocean-400">{activePrompt === idx ? '−' : '+'}</span>
+                       </button>
+                       {activePrompt === idx && (
+                          <div className="p-4 bg-ocean-50 border-t border-ocean-100 text-ocean-800 italic animate-in slide-in-from-top-1">
+                             "{data.content.examples[idx]}"
+                          </div>
+                       )}
+                    </div>
+                 ))}
+              </div>
+           </div>
         </div>
       </div>
     </div>
@@ -879,219 +899,209 @@ export const DrillSlide: React.FC<{ data: SlideData }> = ({ data }) => {
   const checkAnswers = () => setChecked(true);
 
   return (
-    <div className="h-full flex flex-col items-center p-4 overflow-y-auto bg-slate-50">
-        <div className="max-w-4xl w-full bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-ocean-100 mt-8">
-            <h2 className="text-3xl font-bold text-ocean-900 mb-2">{data.title}</h2>
-            <p className="text-slate-500 mb-8">{data.subtitle}</p>
+    <div className="h-full flex flex-col items-center p-4 overflow-y-auto bg-slate-100">
+      <div className="max-w-4xl w-full bg-white rounded-2xl shadow-xl p-8 border border-slate-200 my-auto">
+         <div className="mb-8 text-center">
+            <h2 className="text-3xl font-bold text-ocean-900">{data.title}</h2>
+            <p className="text-slate-500">{data.subtitle}</p>
+         </div>
 
-            <div className="space-y-4">
-                {data.content.drills.map((drill: DrillItem) => {
-                    const userVal = inputs[drill.id] || "";
-                    const isCorrect = userVal.trim().toLowerCase() === drill.correctAnswer.toLowerCase();
-
-                    return (
-                        <div key={drill.id} className="bg-ocean-50 p-4 rounded-xl border border-ocean-100 flex flex-col md:flex-row items-center gap-4">
-                            <div className="bg-white px-3 py-1 rounded border border-ocean-200 text-sm font-mono text-ocean-600 font-bold whitespace-nowrap min-w-[150px] text-center">
-                                {drill.prompt}
-                            </div>
-                            <div className="flex-1 text-lg md:text-xl flex flex-wrap items-center gap-2 justify-center md:justify-start">
-                                <span>{drill.part1}</span>
-                                <input 
-                                    type="text" 
-                                    value={userVal}
-                                    onChange={(e) => {
-                                        setChecked(false);
-                                        setInputs(prev => ({...prev, [drill.id]: e.target.value}));
-                                    }}
-                                    className={`border-b-2 bg-transparent w-32 px-2 text-center font-bold focus:outline-none transition-colors ${
-                                        checked 
-                                        ? (isCorrect ? 'border-green-500 text-green-700' : 'border-red-500 text-red-700') 
-                                        : 'border-slate-400 focus:border-ocean-500'
-                                    }`}
-                                />
-                                <span>{drill.part2}</span>
-                                {checked && (
-                                    isCorrect 
-                                    ? <span className="text-green-500 text-xl">✓</span> 
-                                    : <span className="text-red-500 text-sm font-bold ml-2">({drill.correctAnswer})</span>
-                                )}
-                            </div>
+         <div className="space-y-6">
+            {data.content.drills.map((drill: DrillItem) => {
+               const userVal = (inputs[drill.id] || "").trim();
+               const isCorrect = userVal.toLowerCase() === drill.correctAnswer.toLowerCase();
+               
+               return (
+                  <div key={drill.id} className="flex flex-col md:flex-row items-center justify-between bg-slate-50 p-4 rounded-xl border border-slate-200 gap-4">
+                     <div className="flex-1">
+                        <span className="text-xs font-bold uppercase text-slate-400 tracking-wider mb-1 block">Prompt:</span>
+                        <p className="font-bold text-lg text-slate-700">{drill.prompt}</p>
+                     </div>
+                     
+                     <div className="flex items-center gap-2 text-xl font-medium bg-white px-4 py-2 rounded-lg border border-slate-200 shadow-inner w-full md:w-auto justify-center md:justify-start">
+                        <span>{drill.part1}</span>
+                        <input 
+                           type="text" 
+                           value={inputs[drill.id] || ""}
+                           onChange={(e) => {
+                             setChecked(false);
+                             setInputs({...inputs, [drill.id]: e.target.value});
+                           }}
+                           className={`border-b-2 w-24 text-center focus:outline-none bg-transparent ${
+                              checked 
+                              ? (isCorrect ? 'border-green-500 text-green-600' : 'border-red-500 text-red-600')
+                              : 'border-slate-300 focus:border-ocean-500'
+                           }`}
+                        />
+                        <span>{drill.part2}</span>
+                     </div>
+                     
+                     {checked && (
+                        <div className="w-8 flex justify-center">
+                           {isCorrect ? <span className="text-green-500 text-xl">✓</span> : <span className="text-red-500 text-xl">✗</span>}
                         </div>
-                    );
-                })}
-            </div>
+                     )}
+                  </div>
+               );
+            })}
+         </div>
 
-            <div className="mt-8 flex justify-center">
-                <button 
-                    onClick={checkAnswers}
-                    className="bg-ocean-600 text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-ocean-700 transition-transform active:scale-95"
-                >
-                    Check Answers
-                </button>
-            </div>
-        </div>
+         <div className="mt-8 flex justify-center">
+            <button 
+               onClick={checkAnswers}
+               className="bg-ocean-600 text-white px-8 py-3 rounded-full font-bold hover:bg-ocean-700 shadow-lg transition-transform active:scale-95"
+            >
+               Check Answers
+            </button>
+         </div>
+      </div>
     </div>
   );
 };
 
 // --- Grammar Bank Slide ---
 export const GrammarBankSlide: React.FC<{ data: SlideData }> = ({ data }) => {
-  const [inputs, setInputs] = useState<Record<string, string>>({});
-  const [checked, setChecked] = useState(false);
+   const [inputs, setInputs] = useState<Record<string, string>>({}); // key format: sectionId-itemId-answerIndex
+   const [checked, setChecked] = useState(false);
 
-  const getKey = (sectionId: number, itemId: number, answerIndex: number) => `${sectionId}-${itemId}-${answerIndex}`;
+   const checkAll = () => setChecked(true);
 
-  const checkAnswers = () => setChecked(true);
-
-  return (
-    <div className="h-full flex flex-col items-center p-4 overflow-y-auto bg-slate-100">
-        <div className="max-w-5xl w-full space-y-8 pb-10 mt-4">
-            <div className="text-center">
-                 <h2 className="text-3xl font-bold text-ocean-900">{data.title}</h2>
-                 <p className="text-slate-500">{data.subtitle}</p>
+   return (
+      <div className="h-full flex flex-col items-center p-4 overflow-y-auto bg-[#f8f9fa]">
+         <div className="max-w-5xl w-full bg-white shadow-2xl rounded-xl overflow-hidden my-auto border border-slate-200">
+            <div className="bg-ocean-800 text-white p-6">
+               <h2 className="text-2xl font-bold">{data.title}</h2>
+               <p className="opacity-80">{data.subtitle}</p>
             </div>
-
-            {data.content.sections.map((section: GrammarBankSection) => (
-                <div key={section.id} className="bg-white rounded-2xl shadow-md p-6 border border-slate-200">
-                    <h3 className="text-xl font-bold text-ocean-800 mb-2 border-b border-ocean-100 pb-2">{section.title}</h3>
-                    <p className="text-sm text-slate-500 italic mb-4 bg-yellow-50 p-2 rounded inline-block">Instruction: {section.instruction}</p>
-                    
-                    <div className="space-y-4">
+            
+            <div className="p-8 space-y-10">
+               {data.content.sections.map((section: GrammarBankSection) => (
+                  <div key={section.id}>
+                     <h3 className="text-xl font-bold text-ocean-700 mb-2 border-b border-ocean-100 pb-1">{section.title}</h3>
+                     <p className="text-sm text-slate-500 mb-4 italic">{section.instruction}</p>
+                     
+                     <div className="space-y-3">
                         {section.items.map((item: GrammarBankItem) => (
-                            <div key={item.id} className="flex flex-wrap items-center gap-1 text-lg leading-loose">
-                                <span className="font-bold text-slate-400 w-8">{item.id}.</span>
-                                {item.answers.map((ans, idx) => {
-                                    const key = getKey(section.id, item.id, idx);
-                                    const val = inputs[key] || "";
-                                    const isCorrect = val.trim().toLowerCase() === ans.toLowerCase();
-                                    
-                                    return (
-                                        <React.Fragment key={idx}>
-                                            <span dangerouslySetInnerHTML={{ __html: item.segments[idx] }}></span>
-                                            <div className="relative inline-flex items-center">
-                                                <input 
-                                                    type="text"
-                                                    value={val}
-                                                    onChange={(e) => {
-                                                        setChecked(false);
-                                                        setInputs(prev => ({...prev, [key]: e.target.value}));
-                                                    }}
-                                                    style={{ width: `${Math.max(ans.length * 14, 60)}px` }}
-                                                    className={`border-b-2 bg-slate-50 px-1 text-center font-bold focus:outline-none transition-colors mx-1 rounded-t ${
-                                                        checked 
-                                                        ? (isCorrect ? 'border-green-500 bg-green-50 text-green-800' : 'border-red-500 bg-red-50 text-red-800') 
-                                                        : 'border-slate-300 focus:border-ocean-500'
-                                                    }`}
-                                                />
-                                            </div>
-                                            {checked && !isCorrect && <span className="text-xs text-red-500 font-bold mr-1">({ans})</span>}
-                                        </React.Fragment>
-                                    );
-                                })}
-                                <span dangerouslySetInnerHTML={{ __html: item.segments[item.segments.length - 1] }}></span>
-                                {checked && item.answers.every((ans, idx) => (inputs[getKey(section.id, item.id, idx)]||"").trim().toLowerCase() === ans.toLowerCase()) && (
-                                    <span className="text-green-500 ml-2 text-xl">✓</span>
-                                )}
-                            </div>
+                           <div key={item.id} className="leading-loose text-lg text-slate-800">
+                              {item.segments.map((seg, segIdx) => (
+                                 <React.Fragment key={segIdx}>
+                                    <span dangerouslySetInnerHTML={{ __html: seg.replace(/\n/g, '<br/>') }}></span>
+                                    {segIdx < item.answers.length && (
+                                       <span className="inline-block mx-1">
+                                          <input
+                                             type="text"
+                                             value={inputs[`${section.id}-${item.id}-${segIdx}`] || ""}
+                                             onChange={(e) => {
+                                                setChecked(false);
+                                                setInputs({...inputs, [`${section.id}-${item.id}-${segIdx}`]: e.target.value});
+                                             }}
+                                             className={`border-b-2 w-24 md:w-32 text-center font-medium focus:outline-none bg-transparent transition-colors ${
+                                                checked 
+                                                ? ((inputs[`${section.id}-${item.id}-${segIdx}`] || "").trim().toLowerCase() === item.answers[segIdx].toLowerCase()
+                                                   ? 'border-green-500 text-green-700 bg-green-50'
+                                                   : 'border-red-500 text-red-700 bg-red-50')
+                                                : 'border-slate-300 focus:border-ocean-500 focus:bg-ocean-50'
+                                             }`}
+                                          />
+                                          {checked && (inputs[`${section.id}-${item.id}-${segIdx}`] || "").trim().toLowerCase() !== item.answers[segIdx].toLowerCase() && (
+                                             <span className="text-xs text-red-500 font-bold ml-1">({item.answers[segIdx]})</span>
+                                          )}
+                                       </span>
+                                    )}
+                                 </React.Fragment>
+                              ))}
+                           </div>
                         ))}
-                    </div>
-                </div>
-            ))}
-
-            <div className="flex justify-center pb-8">
-                <button 
-                    onClick={checkAnswers}
-                    className="bg-ocean-600 text-white px-10 py-4 rounded-full font-bold shadow-xl hover:bg-ocean-700 transition-transform active:scale-95 text-lg"
-                >
-                    Check All Answers
-                </button>
+                     </div>
+                  </div>
+               ))}
             </div>
-        </div>
-    </div>
-  );
+
+            <div className="p-6 bg-slate-50 border-t border-slate-200 flex justify-center">
+               <button 
+                  onClick={checkAll}
+                  className="bg-ocean-600 text-white px-10 py-3 rounded-full font-bold text-lg hover:bg-ocean-700 shadow-md transition-transform active:scale-95"
+               >
+                  Verify
+               </button>
+            </div>
+         </div>
+      </div>
+   );
 };
 
 // --- Media Slide ---
 export const MediaSlide: React.FC<{ data: SlideData }> = ({ data }) => {
-    const [selectedItem, setSelectedItem] = useState<any | null>(null);
+   const [activeItem, setActiveItem] = useState<any | null>(null);
 
-    return (
-        <div className="h-full flex flex-col p-4 overflow-y-auto bg-slate-900">
-             <div className="max-w-[1600px] w-full mx-auto my-auto">
-                <div className="text-center mb-8 text-white">
-                    <h2 className="text-3xl font-bold mb-2">{data.title}</h2>
-                    <p className="text-slate-400">{data.subtitle}</p>
-                </div>
+   return (
+      <div className="h-full flex flex-col p-4 bg-slate-900 overflow-y-auto">
+         <div className="max-w-[1600px] w-full mx-auto my-auto flex flex-col gap-6">
+            <div className="text-white mb-4">
+               <h2 className="text-3xl font-bold">{data.title}</h2>
+               <p className="text-slate-400">{data.subtitle}</p>
+            </div>
 
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {data.content.items.map((item: any, idx: number) => (
-                        <div 
-                            key={idx}
-                            onClick={() => setSelectedItem(item)} 
-                            className="group relative aspect-square bg-slate-800 rounded-xl overflow-hidden cursor-pointer hover:ring-4 ring-ocean-500 transition-all shadow-lg"
-                        >
-                            {item.type === 'video' ? (
-                                <div className="w-full h-full flex items-center justify-center bg-black relative">
-                                    <span className="text-4xl relative z-10">▶️</span>
-                                    {/* Try to extract ID or show placeholder */}
-                                    {item.src.includes('v=') ? (
-                                        <img 
-                                            src={`https://img.youtube.com/vi/${item.src.split('v=')[1]}/hqdefault.jpg`} 
-                                            className="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:opacity-80 transition-opacity"
-                                            alt={item.caption}
-                                        />
-                                    ) : (
-                                        <div className="absolute inset-0 bg-slate-700 opacity-60"></div>
-                                    )}
-                                </div>
-                            ) : (
-                                <img src={item.src} alt={item.caption} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                            )}
-                            
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
-                                <p className="text-white font-bold text-sm">{item.caption}</p>
-                            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+               {data.content.items.map((item: any, idx: number) => (
+                  <div 
+                     key={idx} 
+                     onClick={() => setActiveItem(item)}
+                     className="group relative aspect-square bg-slate-800 rounded-xl overflow-hidden cursor-pointer border-2 border-slate-700 hover:border-ocean-500 transition-all hover:shadow-[0_0_20px_rgba(14,165,233,0.3)]"
+                  >
+                     {item.type === 'image' ? (
+                        <img src={item.src} alt={item.caption} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100" />
+                     ) : (
+                        <div className="w-full h-full flex items-center justify-center bg-slate-950 relative">
+                            {/* YouTube Thumbnail workaround or generic video icon if src is just a link */}
+                            <div className="absolute inset-0 bg-red-600/20"></div>
+                            <span className="text-5xl z-10">▶️</span>
+                            <p className="absolute bottom-10 text-white text-xs font-bold z-10">Video Content</p>
                         </div>
-                    ))}
-                </div>
-             </div>
-
-             {/* Lightbox / Viewer */}
-             {selectedItem && (
-                 <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-4 animate-in fade-in duration-200" onClick={() => setSelectedItem(null)}>
-                     <div className="max-w-5xl w-full bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700 flex flex-col md:flex-row max-h-[90vh]" onClick={(e) => e.stopPropagation()}>
-                         <div className="flex-1 bg-black flex items-center justify-center relative min-h-[300px]">
-                            {selectedItem.type === 'video' ? (
-                                <iframe 
-                                    width="100%" 
-                                    height="100%" 
-                                    className="aspect-video"
-                                    src={selectedItem.src.replace('watch?v=', 'embed/')} 
-                                    title={selectedItem.caption}
-                                    frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                                    allowFullScreen
-                                ></iframe>
-                            ) : (
-                                <img src={selectedItem.src} alt={selectedItem.caption} className="max-h-[70vh] w-auto object-contain" />
-                            )}
-                         </div>
-                         <div className="w-full md:w-80 bg-slate-800 p-6 flex flex-col">
-                             <h3 className="text-xl font-bold text-white mb-2">{selectedItem.caption}</h3>
-                             <div className="h-1 w-10 bg-ocean-500 mb-4"></div>
-                             <p className="text-slate-300 leading-relaxed text-sm md:text-base overflow-y-auto">{selectedItem.description}</p>
-                             <div className="mt-auto pt-6">
-                                <button 
-                                    onClick={() => setSelectedItem(null)}
-                                    className="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg transition-colors"
-                                >
-                                    Close
-                                </button>
-                             </div>
-                         </div>
+                     )}
+                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-4 translate-y-2 group-hover:translate-y-0 transition-transform">
+                        <p className="text-white font-bold truncate text-sm">{item.caption}</p>
                      </div>
-                 </div>
-             )}
-        </div>
-    );
+                  </div>
+               ))}
+            </div>
+         </div>
+
+         {/* Modal */}
+         {activeItem && (
+            <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+               <button 
+                  onClick={() => setActiveItem(null)}
+                  className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+               >
+                  <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+               </button>
+
+               <div className="max-w-5xl w-full flex flex-col md:flex-row bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700 max-h-[90vh]">
+                  <div className="flex-1 bg-black flex items-center justify-center p-2 relative min-h-[300px]">
+                     {activeItem.type === 'image' ? (
+                        <img src={activeItem.src} alt={activeItem.caption} className="max-w-full max-h-full object-contain" />
+                     ) : (
+                        <iframe 
+                           width="100%" 
+                           height="100%" 
+                           src={activeItem.src.replace("watch?v=", "embed/")} 
+                           title={activeItem.caption}
+                           frameBorder="0" 
+                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                           allowFullScreen
+                           className="aspect-video w-full h-full"
+                        ></iframe>
+                     )}
+                  </div>
+                  <div className="w-full md:w-80 bg-slate-800 p-6 flex flex-col overflow-y-auto">
+                     <h3 className="text-xl font-bold text-white mb-2">{activeItem.caption}</h3>
+                     <div className="h-1 w-10 bg-ocean-500 rounded mb-4"></div>
+                     <p className="text-slate-300 leading-relaxed">{activeItem.description}</p>
+                  </div>
+               </div>
+            </div>
+         )}
+      </div>
+   );
 };
