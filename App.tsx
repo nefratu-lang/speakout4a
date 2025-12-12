@@ -11,7 +11,9 @@ import {
   SpeakingSlide,
   DrillSlide,
   GrammarBankSlide,
-  MediaSlide
+  MediaSlide,
+  LearningOutcomesSlide,
+  ReflectionSlide
 } from './components/SlideComponents';
 
 const App = () => {
@@ -48,6 +50,7 @@ const App = () => {
   const renderSlideContent = () => {
     switch (currentSlide.type) {
       case SlideType.COVER: return <CoverSlide data={currentSlide} />;
+      case SlideType.LEARNING_OUTCOMES: return <LearningOutcomesSlide data={currentSlide} />; // Yeni
       case SlideType.ICE_BREAKER: return <IceBreakerSlide data={currentSlide} />;
       case SlideType.READING: return <ReadingSlide data={currentSlide} />;
       case SlideType.COMPREHENSION_TF: return <ComprehensionTFSlide data={currentSlide} />;
@@ -57,6 +60,7 @@ const App = () => {
       case SlideType.GRAMMAR_BANK: return <GrammarBankSlide data={currentSlide} />;
       case SlideType.SPEAKING: return <SpeakingSlide data={currentSlide} />;
       case SlideType.MEDIA: return <MediaSlide data={currentSlide} />;
+      case SlideType.REFLECTION: return <ReflectionSlide data={currentSlide} />; // Yeni
       default: return <div className="p-10">Slide content not implemented</div>;
     }
   };
