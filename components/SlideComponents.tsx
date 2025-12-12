@@ -542,20 +542,26 @@ export const ComprehensionTFSlide: React.FC<{ data: SlideData }> = ({ data }) =>
     .map((q: QuestionTF) => q.relatedSentence!);
 
   return (
-    <div className="h-full flex flex-col items-center p-4 overflow-y-auto bg-slate-50 justify-center">
-      <div className="bg-white rounded-3xl shadow-xl p-6 md:p-10 max-w-5xl w-full border border-slate-200 relative">
+    // REMOVED 'justify-center' to prevent top clipping on overflow
+    <div className="h-full flex flex-col items-center p-4 overflow-y-auto bg-slate-50">
+      
+      {/* Added 'my-auto' to vertically center when content is short, but allow scroll when tall */}
+      <div className="bg-white rounded-3xl shadow-xl p-6 md:p-10 max-w-5xl w-full border border-slate-200 relative my-auto">
         
-        {/* Reading Button */}
-        <button 
-            onClick={() => setShowReading(true)}
-            className="absolute top-6 right-6 text-sm md:text-base bg-ocean-100 text-ocean-700 px-4 py-2 rounded-full font-bold hover:bg-ocean-200 transition-colors flex items-center gap-2"
-        >
-            <span>📖</span> Show Reading Text
-        </button>
+        {/* CHANGED: Header with Flexbox instead of Absolute Button */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-8 border-b pb-4 gap-4">
+            <h3 className="text-3xl font-bold text-ocean-800 flex items-center gap-3">
+              <span>⚖️</span> {data.subtitle}
+            </h3>
+            
+            <button 
+                onClick={() => setShowReading(true)}
+                className="text-sm md:text-base bg-ocean-100 text-ocean-700 px-4 py-2 rounded-full font-bold hover:bg-ocean-200 transition-colors flex items-center gap-2 shrink-0"
+            >
+                <span>📖</span> Show Text
+            </button>
+        </div>
 
-        <h3 className="text-3xl font-bold text-ocean-800 mb-8 text-center border-b pb-4 flex items-center justify-center gap-3">
-           <span>⚖️</span> {data.subtitle}
-        </h3>
         <div className="space-y-4">
           {data.content.questions.map((q: QuestionTF) => {
             const status = answers[q.id];
@@ -621,7 +627,7 @@ export const ComprehensionMCSlide: React.FC<{ data: SlideData }> = ({ data }) =>
       {/* Nautical Texture Overlay */}
       <div className="absolute inset-0 opacity-5 pointer-events-none" style={{ backgroundImage: "radial-gradient(#ffffff 1px, transparent 1px)", backgroundSize: "20px 20px" }}></div>
       
-      <div className="w-full max-w-7xl relative z-10 py-6">
+      <div className="w-full max-w-7xl relative z-10 py-6 min-h-min my-auto">
          <div className="flex justify-between items-center mb-8 border-b border-ocean-600 pb-4">
             <h2 className="text-3xl md:text-4xl font-bold text-white drop-shadow-md tracking-wider text-center flex-1">{data.subtitle}</h2>
             {/* Reading Button */}
@@ -712,23 +718,28 @@ export const GrammarSlide: React.FC<{ data: SlideData }> = ({ data }) => {
     : [];
 
   return (
-    <div className="h-full flex flex-col items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-4xl w-full border border-ocean-100 relative">
+    // REMOVED 'justify-center' to prevent top clipping
+    <div className="h-full flex flex-col items-center p-4 overflow-y-auto">
+      
+      {/* Added 'my-auto' */}
+      <div className="bg-white rounded-2xl shadow-lg p-8 max-w-4xl w-full border border-ocean-100 relative my-auto">
         <div className="absolute -top-6 -right-6 p-4 bg-yellow-100 rounded-full shadow-lg rotate-12 hidden md:block">
           <span className="text-5xl">✍️</span>
         </div>
 
-        {/* Reading Button */}
-        <button 
-            onClick={() => setShowReading(true)}
-            className="absolute top-6 left-6 text-sm bg-ocean-100 text-ocean-700 px-3 py-1 rounded-full font-bold hover:bg-ocean-200 transition-colors flex items-center gap-2"
-        >
-            <span>📖</span> Show Reading Text
-        </button>
-        
-        <div className="text-center mb-8">
-            <h3 className="text-3xl font-bold text-ocean-800">{data.title}</h3>
-            <p className="text-slate-500 text-lg">{data.subtitle}</p>
+        {/* CHANGED: Flex Header instead of absolute positioning */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-8 pb-4 border-b gap-4">
+             <div className="text-center md:text-left">
+                <h3 className="text-3xl font-bold text-ocean-800">{data.title}</h3>
+                <p className="text-slate-500 text-lg">{data.subtitle}</p>
+             </div>
+             
+             <button 
+                onClick={() => setShowReading(true)}
+                className="text-sm bg-ocean-100 text-ocean-700 px-4 py-2 rounded-full font-bold hover:bg-ocean-200 transition-colors flex items-center gap-2 shrink-0"
+            >
+                <span>📖</span> Show Text
+            </button>
         </div>
 
         <div className="grid grid-cols-1 gap-y-4 md:gap-y-6">
