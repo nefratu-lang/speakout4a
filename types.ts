@@ -44,6 +44,7 @@ export interface QuestionTF {
   statement: string;
   isTrue: boolean;
   explanation: string;
+  relatedSentence?: string; // Highlight için eklendi
 }
 
 export interface QuestionMC {
@@ -53,6 +54,7 @@ export interface QuestionMC {
   correctIndex: number;
   explanation: string;
   iconType: 'history' | 'geography' | 'person' | 'general';
+  relatedSentence?: string; // Highlight için eklendi
 }
 
 export interface GrammarItem {
@@ -60,6 +62,7 @@ export interface GrammarItem {
   prefix: string;
   suffix: string;
   correctAnswer: 'was' | 'were';
+  relatedSentence?: string; // Highlight için eklendi
 }
 
 export interface DrillItem {
