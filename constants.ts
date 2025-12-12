@@ -1,24 +1,5 @@
 import { SlideType, SlideData, QuestionTF, QuestionMC, GrammarItem, DrillItem, GrammarBankSection } from './types';
 
-// ÖNEMLİ NOT / IMPORTANT NOTE:
-// 1. Proje kök dizininde 'public' adında bir klasör oluşturun.
-// 2. Tüm resim (.jpg) ve ses (.mp3) dosyalarını bu 'public' klasörünün içine taşıyın.
-// 3. Vercel veya Vite kullanırken statik dosyaların 'public' klasöründe olması gerekir.
-// Dosya yollarının başına '/' koyarak public klasöründen okunmasını sağlıyoruz.
-
-const coverImg = '/barbaros_cover.jpg';
-const barbarosStatue = '/barbaros_statue.jpg';
-const ottomanGalleon = '/ottoman_galleon.jpg';
-const karamurselFerry = '/karamursel_ferry.jpg';
-const prevezaBattle = '/preveza_battle.jpg';
-const readingAudio = '/reading_audio.mp3';
-const piriReisMap = '/piri_reis_map.jpg';
-const nigariPortrait = '/nigari_portrait.jpg';
-const ottomanSailors = '/ottoman_sailors.jpg';
-const navalMiniature = '/naval_miniature.jpg';
-const turgutReis = '/turgut_reis.jpg';
-const americaMap = '/america_map.jpg';
-
 export const LESSON_TITLE = "Unit 4A – Legends of the Ottoman Seas";
 
 export const SLIDES: SlideData[] = [
@@ -28,30 +9,64 @@ export const SLIDES: SlideData[] = [
     title: "LEGENDS OF THE OTTOMAN SEAS",
     subtitle: "Unit 4A - Naval History & Past Simple",
     content: {
-      backgroundImage: coverImg
+      backgroundImage: "barbaros_cover.jpg"
     }
   },
   {
     id: 1,
+    type: SlideType.LEARNING_OUTCOMES,
+    title: "Mission Briefing",
+    subtitle: "What will we learn today?",
+    content: {
+      objectives: [
+        {
+          icon: "📜",
+          title: "History & Culture",
+          text: "Learn about Barbaros Hayreddin Paşa and the Ottoman Navy."
+        },
+        {
+          icon: "✍️",
+          title: "Grammar Target",
+          text: "Use 'was' and 'were' to talk about the past."
+        },
+        {
+          icon: "⚓",
+          title: "Vocabulary",
+          text: "Learn naval words like 'admiral', 'sailor', and 'victory'."
+        },
+        {
+          icon: "🗣️",
+          title: "Speaking Skill",
+          text: "Describe famous people and past events."
+        }
+      ],
+      whyBox: {
+        title: "Why are we learning this?",
+        text: "To tell stories about history and describe where people were in the past."
+      }
+    }
+  },
+  {
+    id: 2,
     type: SlideType.ICE_BREAKER,
     title: "Look at the images. What do you think?",
     subtitle: "Click the questions below for hints. Talk with your partner.",
     content: {
       images: [
         { 
-          src: barbarosStatue, 
+          src: "barbaros_statue.jpg", 
           label: "Statue in Beşiktaş" 
         },
         { 
-          src: ottomanGalleon, 
+          src: "ottoman_galleon.jpg", 
           label: "Ottoman Galley (Kadırga)" 
         },
         { 
-          src: karamurselFerry, 
+          src: "karamursel_ferry.jpg", 
           label: "Karamürsel (Ferry/Town)" 
         },
         { 
-          src: prevezaBattle, 
+          src: "preveza_battle.jpg", 
           label: "Sea Battle (Preveza)" 
         }
       ],
@@ -116,12 +131,12 @@ export const SLIDES: SlideData[] = [
     }
   },
   {
-    id: 2,
+    id: 3,
     type: SlideType.READING,
     title: "Legends of the Ottoman Seas",
     subtitle: "Read about the commanders.",
     content: {
-      audioSrc: readingAudio,
+      audioSrc: "reading_audio.mp3",
       text: `Barbaros Hayreddin Paşa was one of the most famous admirals in Ottoman history. He was born on the island of Lesbos, and he was a successful sailor from a young age. He was brave, experienced, and loyal to the Ottoman Empire. He was active in the Mediterranean Sea, and he was famous for protecting Ottoman ports and ships. Many European countries were afraid of him because his navy was strong and fast.
 
 Karamürsel Bey was another important name in early Ottoman naval history. He was the first Kapudan-ı Derya, or “Grand Admiral,” of the Ottoman Empire. He was active in the 14th century, and he was one of the first to organize an Ottoman navy. He was connected to the region of Kocaeli, and the modern town “Karamürsel” was named after him. In his time, shipbuilding and training sailors were very important.
@@ -210,7 +225,7 @@ Both commanders were leaders of different centuries, but they were similar in on
     }
   },
   {
-    id: 3,
+    id: 4,
     type: SlideType.COMPREHENSION_TF,
     title: "Comprehension Check",
     subtitle: "True or False?",
@@ -226,7 +241,7 @@ Both commanders were leaders of different centuries, but they were similar in on
     }
   },
   {
-    id: 4,
+    id: 5,
     type: SlideType.COMPREHENSION_MC,
     title: "Comprehension Check",
     subtitle: "Choose the correct answer.",
@@ -284,7 +299,7 @@ Both commanders were leaders of different centuries, but they were similar in on
     }
   },
   {
-    id: 5,
+    id: 6,
     type: SlideType.GRAMMAR,
     title: "Grammar Practice",
     subtitle: "Complete with 'was' or 'were'.",
@@ -302,7 +317,7 @@ Both commanders were leaders of different centuries, but they were similar in on
     }
   },
   {
-    id: 6,
+    id: 7,
     type: SlideType.SPEAKING,
     title: "Subject Explanation & Speaking",
     subtitle: "Past Simple: TO BE (Was / Were)",
@@ -349,7 +364,7 @@ Both commanders were leaders of different centuries, but they were similar in on
     }
   },
   {
-    id: 7,
+    id: 8,
     type: SlideType.DRILL,
     title: "Pattern Practice",
     subtitle: "Complete the questions and answers.",
@@ -466,7 +481,7 @@ Both commanders were leaders of different centuries, but they were similar in on
     }
   },
   {
-    id: 8,
+    id: 9,
     type: SlideType.GRAMMAR_BANK,
     title: "Pattern Practice Speakout A2 4A Grammar Bank",
     subtitle: "Exercises",
@@ -506,7 +521,7 @@ Both commanders were leaders of different centuries, but they were similar in on
     }
   },
   {
-    id: 9,
+    id: 10,
     type: SlideType.MEDIA,
     title: "Historical Gallery",
     subtitle: "Visual & Video Context",
@@ -514,55 +529,55 @@ Both commanders were leaders of different centuries, but they were similar in on
       items: [
         { 
           type: "image", 
-          src: barbarosStatue, 
+          src: "barbaros_statue.jpg", 
           caption: "Statue of Barbaros (Istanbul)",
           description: "This is a statue of Barbaros. It is in Beşiktaş. He was a famous admiral."
         },
         { 
           type: "image", 
-          src: piriReisMap, 
+          src: "piri_reis_map.jpg", 
           caption: "Piri Reis Map",
           description: "This is the Piri Reis map. It was very detailed. Piri Reis was a clever cartographer."
         },
         { 
           type: "image", 
-          src: ottomanGalleon, 
+          src: "ottoman_galleon.jpg", 
           caption: "Ottoman Galleon",
           description: "This is an Ottoman galleon. It was a big ship. The navy was strong."
         },
         { 
           type: "image", 
-          src: nigariPortrait, 
+          src: "nigari_portrait.jpg", 
           caption: "Portrait by Nigari",
           description: "This is a painting of Barbaros. He was old in this picture. He was powerful."
         },
         { 
           type: "image", 
-          src: prevezaBattle, 
+          src: "preveza_battle.jpg", 
           caption: "Battle of Preveza",
           description: "This was the Battle of Preveza. It was in 1538. It was a great victory."
         },
         { 
           type: "image", 
-          src: ottomanSailors, 
+          src: "ottoman_sailors.jpg", 
           caption: "Ottoman Sailors",
           description: "These were Ottoman sailors. They were brave. Their clothes were traditional."
         },
         { 
           type: "image", 
-          src: navalMiniature, 
+          src: "naval_miniature.jpg", 
           caption: "Naval Miniature",
           description: "This is an old miniature. It was a style of art. The ships were colorful."
         },
         { 
           type: "image", 
-          src: turgutReis, 
+          src: "turgut_reis.jpg", 
           caption: "Turgut Reis",
           description: "This was Turgut Reis. He was also a famous commander. He was a friend of Barbaros."
         },
         { 
           type: "image", 
-          src: americaMap, 
+          src: "america_map.jpg", 
           caption: "Map of America (Piri Reis)",
           description: "This was a map of America. It was very interesting. Piri Reis was the drawer."
         },
@@ -573,6 +588,25 @@ Both commanders were leaders of different centuries, but they were similar in on
           description: "This is a video about Barbaros. He was a legend of the seas."
         }
       ]
+    }
+  },
+  {
+    id: 11,
+    type: SlideType.REFLECTION,
+    title: "Mission Report & Debrief",
+    subtitle: "Captain's Log: End of Lesson",
+    content: {
+      recap: [
+        { text: "We learned about Barbaros and Karamürsel Bey.", icon: "✅" },
+        { text: "We practiced 'was' and 'were' (Past Simple).", icon: "✅" },
+        { text: "We saw historical maps and ships.", icon: "✅" }
+      ],
+      selfCheck: [
+        { text: "I can describe people in the past.", id: 1 },
+        { text: "I can use 'was' and 'were' correctly.", id: 2 },
+        { text: "I know new naval words.", id: 3 }
+      ],
+      finalMessage: "Great job, Sailor! You are ready for the next adventure."
     }
   }
 ];
