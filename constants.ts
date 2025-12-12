@@ -231,12 +231,48 @@ Both commanders were leaders of different centuries, but they were similar in on
     subtitle: "True or False?",
     content: {
       questions: [
-        { id: 1, statement: "Barbaros was born on an island.", isTrue: true, explanation: "Yes, he was born on Lesbos (Midilli)." },
-        { id: 2, statement: "European countries were not afraid of Barbaros.", isTrue: false, explanation: "False. They were afraid because his navy was strong." },
-        { id: 3, statement: "Karamürsel Bey was the first Grand Admiral.", isTrue: true, explanation: "True, he was the first Kapudan-ı Derya." },
-        { id: 4, statement: "Ottoman shipbuilding was important in his time.", isTrue: true, explanation: "Correct. Building ships was very important." },
-        { id: 5, statement: "They were active in the 20th century.", isTrue: false, explanation: "No, they were active in the 14th and 16th centuries." },
-        { id: 6, statement: "Karamürsel Bey is connected to the city of Kocaeli.", isTrue: true, explanation: "Yes, the district is named after him." },
+        { 
+          id: 1, 
+          statement: "Barbaros was born on an island.", 
+          isTrue: true, 
+          explanation: "Yes, he was born on Lesbos (Midilli).",
+          relatedSentence: "He was born on the island of Lesbos"
+        },
+        { 
+          id: 2, 
+          statement: "European countries were not afraid of Barbaros.", 
+          isTrue: false, 
+          explanation: "False. They were afraid because his navy was strong.",
+          relatedSentence: "Many European countries were afraid of him because his navy was strong"
+        },
+        { 
+          id: 3, 
+          statement: "Karamürsel Bey was the first Grand Admiral.", 
+          isTrue: true, 
+          explanation: "True, he was the first Kapudan-ı Derya.",
+          relatedSentence: "He was the first Kapudan-ı Derya, or “Grand Admiral,” of the Ottoman Empire"
+        },
+        { 
+          id: 4, 
+          statement: "Ottoman shipbuilding was important in his time.", 
+          isTrue: true, 
+          explanation: "Correct. Building ships was very important.",
+          relatedSentence: "shipbuilding and training sailors were very important"
+        },
+        { 
+          id: 5, 
+          statement: "They were active in the 20th century.", 
+          isTrue: false, 
+          explanation: "No, they were active in the 14th and 16th centuries.",
+          relatedSentence: "Both commanders were leaders of different centuries"
+        },
+        { 
+          id: 6, 
+          statement: "Karamürsel Bey is connected to the city of Kocaeli.", 
+          isTrue: true, 
+          explanation: "Yes, the district is named after him.",
+          relatedSentence: "He was connected to the region of Kocaeli"
+        },
       ] as QuestionTF[]
     }
   },
@@ -253,7 +289,8 @@ Both commanders were leaders of different centuries, but they were similar in on
           options: ["Black Sea", "Mediterranean", "Aegean"], 
           correctIndex: 1,
           iconType: "geography",
-          explanation: "Tip: The Mediterranean (Akdeniz) was the center of his power."
+          explanation: "Tip: The Mediterranean (Akdeniz) was the center of his power.",
+          relatedSentence: "He was active in the Mediterranean Sea"
         },
         { 
           id: 2, 
@@ -261,7 +298,8 @@ Both commanders were leaders of different centuries, but they were similar in on
           options: ["Kocaeli", "Spain", "Tunisia"], 
           correctIndex: 0,
           iconType: "geography",
-          explanation: "Info: Kocaeli is a province in Turkey where Karamürsel is located."
+          explanation: "Info: Kocaeli is a province in Turkey where Karamürsel is located.",
+          relatedSentence: "He was connected to the region of Kocaeli"
         },
         { 
           id: 3, 
@@ -269,7 +307,8 @@ Both commanders were leaders of different centuries, but they were similar in on
           options: ["Building castles", "Protecting ports", "Writing books"], 
           correctIndex: 1,
           iconType: "person",
-          explanation: "Correct! Protecting Ottoman trade and ports was his main duty."
+          explanation: "Correct! Protecting Ottoman trade and ports was his main duty.",
+          relatedSentence: "he was famous for protecting Ottoman ports and ships"
         },
         { 
           id: 4, 
@@ -277,7 +316,8 @@ Both commanders were leaders of different centuries, but they were similar in on
           options: ["14th Century", "16th Century", "19th Century"], 
           correctIndex: 0,
           iconType: "history",
-          explanation: "Right. He was an early Ottoman commander (1300s)."
+          explanation: "Right. He was an early Ottoman commander (1300s).",
+          relatedSentence: "He was active in the 14th century"
         },
         { 
           id: 5, 
@@ -285,7 +325,8 @@ Both commanders were leaders of different centuries, but they were similar in on
           options: ["Captain of the Ship", "Grand Admiral", "Soldier"], 
           correctIndex: 1,
           iconType: "general",
-          explanation: "Info: It is the highest rank in the Ottoman Navy."
+          explanation: "Info: It is the highest rank in the Ottoman Navy.",
+          relatedSentence: "He was the first Kapudan-ı Derya, or “Grand Admiral,”"
         },
         { 
           id: 6, 
@@ -293,7 +334,8 @@ Both commanders were leaders of different centuries, but they were similar in on
           options: ["They were rich", "Strategic Skill", "Foreign Help"], 
           correctIndex: 1,
           iconType: "general",
-          explanation: "Yes, their experience and naval strategy made them successful."
+          explanation: "Yes, their experience and naval strategy made them successful.",
+          relatedSentence: "Their missions were difficult, but they were successful"
         },
       ] as QuestionMC[]
     }
@@ -305,14 +347,61 @@ Both commanders were leaders of different centuries, but they were similar in on
     subtitle: "Complete with 'was' or 'were'.",
     content: {
       items: [
-        { id: 1, prefix: "Barbaros", suffix: "a famous admiral.", correctAnswer: "was" },
-        { id: 2, prefix: "They", suffix: "important commanders.", correctAnswer: "were" },
-        { id: 3, prefix: "Karamürsel", suffix: "active in the 14th century.", correctAnswer: "was" },
-        { id: 4, prefix: "Naval battles", suffix: "dangerous.", correctAnswer: "were" },
-        { id: 5, prefix: "Ottoman ships", suffix: "strong.", correctAnswer: "were" },
-        { id: 6, prefix: "I", suffix: "at the museum yesterday.", correctAnswer: "was" },
-        { id: 7, prefix: "The sea", suffix: "calm last night.", correctAnswer: "was" },
-        { id: 8, prefix: "The sailors", suffix: "brave.", correctAnswer: "were" },
+        { 
+          id: 1, 
+          prefix: "Barbaros", 
+          suffix: "a famous admiral.", 
+          correctAnswer: "was",
+          relatedSentence: "Barbaros Hayreddin Paşa was one of the most famous admirals"
+        },
+        { 
+          id: 2, 
+          prefix: "They", 
+          suffix: "important commanders.", 
+          correctAnswer: "were",
+          relatedSentence: "Both commanders were leaders"
+        },
+        { 
+          id: 3, 
+          prefix: "Karamürsel", 
+          suffix: "active in the 14th century.", 
+          correctAnswer: "was",
+          relatedSentence: "He was active in the 14th century"
+        },
+        { 
+          id: 4, 
+          prefix: "Naval battles", 
+          suffix: "dangerous.", 
+          correctAnswer: "were",
+          relatedSentence: "Their missions were difficult"
+        },
+        { 
+          id: 5, 
+          prefix: "Ottoman ships", 
+          suffix: "strong.", 
+          correctAnswer: "were",
+          relatedSentence: "his navy was strong and fast"
+        },
+        { 
+          id: 6, 
+          prefix: "I", 
+          suffix: "at the museum yesterday.", 
+          correctAnswer: "was" 
+          // Genel örnek olduğu için reference yok
+        },
+        { 
+          id: 7, 
+          prefix: "The sea", 
+          suffix: "calm last night.", 
+          correctAnswer: "was" 
+        },
+        { 
+          id: 8, 
+          prefix: "The sailors", 
+          suffix: "brave.", 
+          correctAnswer: "were",
+          relatedSentence: "He was brave, experienced"
+        },
       ] as GrammarItem[]
     }
   },
