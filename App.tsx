@@ -50,7 +50,7 @@ const App = () => {
   const renderSlideContent = () => {
     switch (currentSlide.type) {
       case SlideType.COVER: return <CoverSlide data={currentSlide} />;
-      case SlideType.LEARNING_OUTCOMES: return <LearningOutcomesSlide data={currentSlide} />; // Yeni
+      case SlideType.LEARNING_OUTCOMES: return <LearningOutcomesSlide data={currentSlide} />;
       case SlideType.ICE_BREAKER: return <IceBreakerSlide data={currentSlide} />;
       case SlideType.READING: return <ReadingSlide data={currentSlide} />;
       case SlideType.COMPREHENSION_TF: return <ComprehensionTFSlide data={currentSlide} />;
@@ -60,23 +60,23 @@ const App = () => {
       case SlideType.GRAMMAR_BANK: return <GrammarBankSlide data={currentSlide} />;
       case SlideType.SPEAKING: return <SpeakingSlide data={currentSlide} />;
       case SlideType.MEDIA: return <MediaSlide data={currentSlide} />;
-      case SlideType.REFLECTION: return <ReflectionSlide data={currentSlide} />; // Yeni
+      case SlideType.REFLECTION: return <ReflectionSlide data={currentSlide} />;
       default: return <div className="p-10">Slide content not implemented</div>;
     }
   };
 
   return (
-    // FULL SCREEN CONTAINER - No padding, No rounded corners
-    <div className="w-screen h-screen flex flex-col bg-ocean-50 font-sans overflow-hidden">
+    // FULL SCREEN CONTAINER - Using 100dvh for mobile browser compatibility
+    <div className="w-full h-[100dvh] flex flex-col bg-ocean-50 font-sans overflow-hidden">
         
       {/* Top Bar (Header) - Sticky at top */}
       {currentSlide.type !== SlideType.COVER && (
-        <header className="bg-white border-b border-ocean-100 h-14 md:h-16 flex items-center justify-between px-4 md:px-8 shadow-sm shrink-0 z-20">
-          <div className="flex items-center gap-3">
-              <span className="text-xl md:text-2xl">⚓</span>
-              <h1 className="text-ocean-900 font-bold text-base md:text-xl truncate">{LESSON_TITLE}</h1>
+        <header className="bg-white border-b border-ocean-100 h-12 md:h-16 flex items-center justify-between px-3 md:px-8 shadow-sm shrink-0 z-20">
+          <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
+              <span className="text-xl md:text-2xl shrink-0">⚓</span>
+              <h1 className="text-ocean-900 font-bold text-sm md:text-xl truncate">{LESSON_TITLE}</h1>
           </div>
-          <div className="text-slate-400 font-serif italic text-sm">
+          <div className="text-slate-400 font-serif italic text-xs md:text-sm shrink-0 ml-2">
             {currentSlideIndex + 1} / {SLIDES.length}
           </div>
         </header>
@@ -100,16 +100,16 @@ const App = () => {
       </main>
 
       {/* Navigation Footer - Sticky at bottom */}
-      <footer className="bg-white border-t border-slate-200 px-4 py-2 md:p-4 shrink-0 z-20 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+      <footer className="bg-white border-t border-slate-200 px-3 py-2 md:p-4 shrink-0 z-20 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
         <button
           onClick={prevSlide}
           disabled={currentSlideIndex === 0}
-          className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-ocean-600 text-white hover:bg-ocean-700 shadow-md"
+          className="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-ocean-600 text-white hover:bg-ocean-700 shadow-md text-sm md:text-base"
         >
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
-          <span className="hidden sm:inline">Back</span>
+          <span>Back</span>
         </button>
 
         {/* Slide Indicator Dots - Hide on small screens, adjust size */}
@@ -128,9 +128,9 @@ const App = () => {
         <button
           onClick={nextSlide}
           disabled={currentSlideIndex === SLIDES.length - 1}
-          className="flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-ocean-600 text-white hover:bg-ocean-700 shadow-md"
+          className="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-ocean-600 text-white hover:bg-ocean-700 shadow-md text-sm md:text-base"
         >
-          <span className="hidden sm:inline">Next</span>
+          <span>Next</span>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
           </svg>
