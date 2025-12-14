@@ -1035,76 +1035,106 @@ export const GrammarBankSlide: React.FC<{ data: SlideData }> = ({ data }) => {
 
 // --- Media Slide ---
 export const MediaSlide: React.FC<{ data: SlideData }> = ({ data }) => {
-   const [activeItem, setActiveItem] = useState<any | null>(null);
+   const [currentIndex, setCurrentIndex] = useState(0);
+   const items = data.content.items;
+   const currentItem = items[currentIndex];
+
+   const nextItem = () => setCurrentIndex((prev) => (prev + 1) % items.length);
+   const prevItem = () => setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+
+   // Function to handle keyboard events for this slide specifically
+   // Note: Global arrow keys are handled in App.tsx for slide navigation, 
+   // so we might rely on click buttons here to avoid conflict, or stopPropagation if focused.
 
    return (
-      <div className="h-full flex flex-col p-4 bg-slate-900 overflow-y-auto">
-         <div className="max-w-[1600px] w-full mx-auto my-auto flex flex-col gap-6">
-            <div className="text-white mb-4">
-               <h2 className="text-3xl font-bold">{data.title}</h2>
-               <p className="text-slate-400">{data.subtitle}</p>
+      <div className="h-full flex flex-col p-0 md:p-4 bg-slate-900 overflow-hidden">
+         <div className="w-full h-full max-w-[1600px] mx-auto flex flex-col relative bg-black/40 md:rounded-xl overflow-hidden border border-slate-800">
+            
+            {/* Header (Transparent overlay) */}
+            <div className="absolute top-0 left-0 right-0 z-20 p-4 bg-gradient-to-b from-black/80 to-transparent pointer-events-none">
+               <h2 className="text-2xl font-bold text-white drop-shadow-md">{data.title}</h2>
+               <p className="text-slate-300 text-sm drop-shadow">{data.subtitle}</p>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-               {data.content.items.map((item: any, idx: number) => (
-                  <div 
-                     key={idx} 
-                     onClick={() => setActiveItem(item)}
-                     className="group relative aspect-square bg-slate-800 rounded-xl overflow-hidden cursor-pointer border-2 border-slate-700 hover:border-ocean-500 transition-all hover:shadow-[0_0_20px_rgba(14,165,233,0.3)]"
-                  >
-                     {item.type === 'image' ? (
-                        <img src={item.src} alt={item.caption} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 opacity-80 group-hover:opacity-100" />
-                     ) : (
-                        <div className="w-full h-full flex items-center justify-center bg-slate-950 relative">
-                            {/* YouTube Thumbnail workaround or generic video icon if src is just a link */}
-                            <div className="absolute inset-0 bg-red-600/20"></div>
-                            <span className="text-5xl z-10">▶️</span>
-                            <p className="absolute bottom-10 text-white text-xs font-bold z-10">Video Content</p>
-                        </div>
-                     )}
-                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 to-transparent p-4 translate-y-2 group-hover:translate-y-0 transition-transform">
-                        <p className="text-white font-bold truncate text-sm">{item.caption}</p>
-                     </div>
-                  </div>
-               ))}
-            </div>
-         </div>
-
-         {/* Modal */}
-         {activeItem && (
-            <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in">
+            {/* Main Content Viewer (Carousel) */}
+            <div className="flex-1 relative flex items-center justify-center bg-black overflow-hidden group">
+               
+               {/* Previous Button */}
                <button 
-                  onClick={() => setActiveItem(null)}
-                  className="absolute top-4 right-4 text-white/50 hover:text-white transition-colors"
+                  onClick={(e) => { e.stopPropagation(); prevItem(); }}
+                  className="absolute left-2 md:left-4 z-30 p-2 md:p-3 rounded-full bg-black/40 text-white hover:bg-white/20 hover:scale-110 transition-all border border-white/10"
                >
-                  <svg className="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                  <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M15 19l-7-7 7-7" /></svg>
                </button>
 
-               <div className="max-w-5xl w-full flex flex-col md:flex-row bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700 max-h-[90vh]">
-                  <div className="flex-1 bg-black flex items-center justify-center p-2 relative min-h-[300px]">
-                     {activeItem.type === 'image' ? (
-                        <img src={activeItem.src} alt={activeItem.caption} className="max-w-full max-h-full object-contain" />
-                     ) : (
-                        <iframe 
-                           width="100%" 
-                           height="100%" 
-                           src={activeItem.src.replace("watch?v=", "embed/")} 
-                           title={activeItem.caption}
-                           frameBorder="0" 
-                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                           allowFullScreen
-                           className="aspect-video w-full h-full"
-                        ></iframe>
-                     )}
-                  </div>
-                  <div className="w-full md:w-80 bg-slate-800 p-6 flex flex-col overflow-y-auto">
-                     <h3 className="text-xl font-bold text-white mb-2">{activeItem.caption}</h3>
-                     <div className="h-1 w-10 bg-ocean-500 rounded mb-4"></div>
-                     <p className="text-slate-300 leading-relaxed">{activeItem.description}</p>
+               {/* Active Item */}
+               <div className="w-full h-full flex items-center justify-center animate-in fade-in duration-300 key={currentIndex}">
+                  {currentItem.type === 'image' ? (
+                     <img 
+                        src={currentItem.src} 
+                        alt={currentItem.caption} 
+                        className="max-h-full max-w-full object-contain pointer-events-none" 
+                     />
+                  ) : (
+                     <iframe 
+                        width="100%" 
+                        height="100%" 
+                        src={currentItem.src.replace("watch?v=", "embed/")} 
+                        title={currentItem.caption}
+                        frameBorder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowFullScreen
+                        className="w-full h-full aspect-video"
+                     ></iframe>
+                  )}
+               </div>
+
+               {/* Next Button */}
+               <button 
+                  onClick={(e) => { e.stopPropagation(); nextItem(); }}
+                  className="absolute right-2 md:right-4 z-30 p-2 md:p-3 rounded-full bg-black/40 text-white hover:bg-white/20 hover:scale-110 transition-all border border-white/10"
+               >
+                  <svg className="w-6 h-6 md:w-8 md:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" /></svg>
+               </button>
+
+               {/* Caption & Description Overlay */}
+               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/80 to-transparent p-4 md:p-8 pt-12 text-white">
+                  <div className="max-w-3xl mx-auto">
+                     <h3 className="text-xl md:text-2xl font-bold mb-2 flex items-center gap-2">
+                        {currentItem.type === 'video' ? '📺' : '📷'} {currentItem.caption}
+                     </h3>
+                     <p className="text-slate-300 leading-relaxed text-sm md:text-base">
+                        {currentItem.description}
+                     </p>
                   </div>
                </div>
             </div>
-         )}
+
+            {/* Thumbnail Strip (Bottom) */}
+            <div className="bg-slate-950 p-2 md:p-4 border-t border-slate-800 shrink-0 overflow-x-auto">
+               <div className="flex justify-center md:justify-start gap-2 md:gap-4 min-w-min mx-auto">
+                  {items.map((item: any, idx: number) => (
+                     <button
+                        key={idx}
+                        onClick={() => setCurrentIndex(idx)}
+                        className={`relative w-16 h-16 md:w-24 md:h-24 shrink-0 rounded-lg overflow-hidden border-2 transition-all ${
+                           idx === currentIndex 
+                           ? 'border-ocean-500 scale-105 shadow-[0_0_15px_rgba(14,165,233,0.5)]' 
+                           : 'border-transparent opacity-60 hover:opacity-100'
+                        }`}
+                     >
+                        {item.type === 'image' ? (
+                           <img src={item.src} alt={item.caption} className="w-full h-full object-cover" />
+                        ) : (
+                           <div className="w-full h-full bg-slate-900 flex items-center justify-center text-white">
+                              <span className="text-xl">▶️</span>
+                           </div>
+                        )}
+                     </button>
+                  ))}
+               </div>
+            </div>
+         </div>
       </div>
    );
 };
