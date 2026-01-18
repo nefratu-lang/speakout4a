@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { SlideData, MatchingItem, DrillItem } from '../types';
 
-// --- Cover Slide ---
+// --- Cover Slide (onNext eklendi) ---
 export const CoverSlide: React.FC<{ data: SlideData; onNext?: () => void }> = ({ data, onNext }) => {
   return (
     <div className="h-full w-full flex flex-col items-center justify-center relative overflow-hidden bg-slate-900 text-white">
@@ -26,7 +26,7 @@ export const CoverSlide: React.FC<{ data: SlideData; onNext?: () => void }> = ({
               </p>
           </div>
 
-          {/* TIKLANABİLİR BAŞLATMA ALANI */}
+          {/* START BUTTON */}
           <div 
             onClick={onNext}
             className="mt-16 animate-bounce cursor-pointer hover:scale-110 transition-transform active:scale-95 group"
@@ -283,7 +283,7 @@ export const MatchingSlide: React.FC<{ data: SlideData }> = ({ data }) => {
                                         w-full p-6 rounded-xl text-right border-2 transition-all duration-300 relative
                                         ${isMatched 
                                             ? 'bg-green-100 border-green-500 text-green-800 opacity-50' 
-                                            : 'bg-white border-slate-200 text-slate-700 hover:border-blue-400 hover:bg-slate-50'
+                                            : 'bg-white border-slate-200 text-slate-700 hover:border-blue-400 hover:border-blue-400 hover:bg-slate-50'
                                         }
                                     `}
                                 >
