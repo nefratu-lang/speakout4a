@@ -1,23 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { SLIDES, LESSON_TITLE } from './constants';
 import { SlideType } from './types';
-import { 
-  CoverSlide, 
-  ObjectivesSlide, 
-  VocabularySlide, 
-  ReadingSlide, 
-  GrammarSlide, 
-  MatchingSlide, 
-  DrillSlide
+import {
+  CoverSlide,
+  IceBreakerSlide,
+  ReadingSlide,
+  ComprehensionTFSlide,
+  ComprehensionMCSlide,
+  GrammarSlide,
+  SpeakingSlide,
+  DrillSlide,
+  GrammarBankSlide,
+  MediaSlide,
+  LearningOutcomesSlide,
+  ReflectionSlide
 } from './components/SlideComponents';
 
 const App = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false); // Tam Ekran Durumu
-
   const currentSlide = SLIDES[currentSlideIndex];
-  
-  // Progress calculation
   const progress = ((currentSlideIndex + 1) / SLIDES.length) * 100;
 
   const nextSlide = () => {
@@ -32,137 +33,109 @@ const App = () => {
     }
   };
 
-  // --- FULLSCREEN TOGGLE ---
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((e) => {
-        console.error(`Fullscreen error: ${e.message}`);
-      });
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      }
-    }
-  };
-
+  // Keyboard Navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowRight') nextSlide();
-      else if (e.key === 'ArrowLeft') prevSlide();
-    };
-
-    const handleFullscreenChange = () => {
-      setIsFullscreen(!!document.fullscreenElement);
+      if (e.key === 'ArrowRight') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    return () => {
-      window.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
-    };
+    return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSlideIndex]);
 
   const renderSlideContent = () => {
-    switch(currentSlide.type) {
-      // Kapak Sayfasına onNext prop'unu iletiyoruz (Tıklayınca geçmesi için)
-      case SlideType.COVER:
-        return <CoverSlide data={currentSlide} onNext={nextSlide} />;
-      case SlideType.OBJECTIVES:
-        return <ObjectivesSlide data={currentSlide} />;
-      case SlideType.VOCABULARY:
-        return <VocabularySlide data={currentSlide} />;
-      case SlideType.READING:
-        return <ReadingSlide data={currentSlide} />;
-      case SlideType.GRAMMAR:
-        return <GrammarSlide data={currentSlide} />;
-      case SlideType.MATCHING:
-        return <MatchingSlide data={currentSlide} />;
-      case SlideType.DRILL:
-        return <DrillSlide data={currentSlide} />;
-      default:
-        return <div className="p-10 text-center">Slide type not supported</div>;
+    switch (currentSlide.type) {
+      case SlideType.COVER: return <CoverSlide data={currentSlide} />;
+      case SlideType.LEARNING_OUTCOMES: return <LearningOutcomesSlide data={currentSlide} />;
+      case SlideType.ICE_BREAKER: return <IceBreakerSlide data={currentSlide} />;
+      case SlideType.READING: return <ReadingSlide data={currentSlide} />;
+      case SlideType.COMPREHENSION_TF: return <ComprehensionTFSlide data={currentSlide} />;
+      case SlideType.COMPREHENSION_MC: return <ComprehensionMCSlide data={currentSlide} />;
+      case SlideType.GRAMMAR: return <GrammarSlide data={currentSlide} />;
+      case SlideType.DRILL: return <DrillSlide data={currentSlide} />;
+      case SlideType.GRAMMAR_BANK: return <GrammarBankSlide data={currentSlide} />;
+      case SlideType.SPEAKING: return <SpeakingSlide data={currentSlide} />;
+      case SlideType.MEDIA: return <MediaSlide data={currentSlide} />;
+      case SlideType.REFLECTION: return <ReflectionSlide data={currentSlide} />;
+      default: return <div className="p-10">Slide content not implemented</div>;
     }
   };
 
   return (
-    <div className="w-full h-screen flex flex-col bg-slate-100 font-sans overflow-hidden text-slate-800 relative">
-      
-      {/* --- FULLSCREEN BUTTON (Sağ Üst - Her Zaman Görünür) --- */}
-      <button 
-        onClick={toggleFullscreen}
-        className="fixed top-3 right-4 z-50 p-2 bg-white/90 hover:bg-white backdrop-blur-sm text-slate-700 rounded-full shadow-lg border border-slate-200 transition-all active:scale-95"
-        title="Toggle Fullscreen"
-      >
-        {isFullscreen ? (
-           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
-        ) : (
-           <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
-        )}
-      </button>
-
-      {/* Header (Kapak Sayfasında Gizli) */}
+    // FULL SCREEN CONTAINER - Using 100dvh for mobile browser compatibility
+    <div className="w-full h-[100dvh] flex flex-col bg-ocean-50 font-sans overflow-hidden">
+        
+      {/* Top Bar (Header) - Sticky at top */}
       {currentSlide.type !== SlideType.COVER && (
-        <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm shrink-0 z-20">
-           <div className="flex items-center gap-3">
-              <span className="text-2xl">⚓</span>
-              <h1 className="font-bold text-slate-800 uppercase tracking-widest text-sm md:text-base">
-                {LESSON_TITLE}
-              </h1>
-           </div>
-           
-           <div className="flex items-center gap-4">
-              <div className="text-slate-500 font-mono text-sm bg-slate-100 px-3 py-1 rounded mr-12 md:mr-0">
-                {currentSlideIndex + 1} / {SLIDES.length}
-              </div>
-           </div>
+        <header className="bg-white border-b border-ocean-100 h-12 md:h-16 flex items-center justify-between px-3 md:px-8 shadow-sm shrink-0 z-20">
+          <div className="flex items-center gap-2 md:gap-3 overflow-hidden">
+              <span className="text-xl md:text-2xl shrink-0">⚓</span>
+              <h1 className="text-ocean-900 font-bold text-sm md:text-xl truncate">{LESSON_TITLE}</h1>
+          </div>
+          <div className="text-slate-400 font-serif italic text-xs md:text-sm shrink-0 ml-2">
+            {currentSlideIndex + 1} / {SLIDES.length}
+          </div>
         </header>
       )}
 
       {/* Progress Bar */}
       {currentSlide.type !== SlideType.COVER && (
-        <div className="h-1 bg-slate-200 w-full shrink-0 z-20">
-           <div 
-              className="h-full bg-indigo-600 transition-all duration-500 ease-out"
-              style={{ width: `${progress}%` }}
-           />
+        <div className="h-1 bg-ocean-100 w-full shrink-0 z-20">
+          <div 
+            className="h-full bg-ocean-600 transition-all duration-500 ease-out shadow-[0_0_10px_rgba(14,165,233,0.5)]"
+            style={{ width: `${progress}%` }}
+          />
         </div>
       )}
 
-      {/* Main Content */}
-      <main className="flex-1 overflow-hidden relative">
-        {renderSlideContent()}
+      {/* Main Content Area - Fills remaining height */}
+      <main className="flex-1 overflow-hidden relative bg-[url('https://www.transparenttextures.com/patterns/paper.png')]">
+        <div className="absolute inset-0 w-full h-full">
+            {renderSlideContent()}
+        </div>
       </main>
 
-      {/* Navigation Footer (Kapak Sayfasında Gizli) */}
-      {currentSlide.type !== SlideType.COVER && (
-        <footer className="bg-white border-t border-slate-200 px-6 py-4 shrink-0 z-20 flex justify-between items-center">
-           <button 
-             onClick={prevSlide}
-             disabled={currentSlideIndex === 0}
-             className="px-6 py-3 rounded-lg font-bold text-slate-600 hover:bg-slate-100 disabled:opacity-30 disabled:hover:bg-transparent transition-colors flex items-center gap-2"
-           >
-             ← BACK
-           </button>
+      {/* Navigation Footer - Sticky at bottom */}
+      <footer className="bg-white border-t border-slate-200 px-3 py-2 md:p-4 shrink-0 z-20 flex justify-between items-center shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <button
+          onClick={prevSlide}
+          disabled={currentSlideIndex === 0}
+          className="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-ocean-600 text-white hover:bg-ocean-700 shadow-md text-sm md:text-base"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+          <span>Back</span>
+        </button>
 
-           <div className="hidden md:flex gap-1.5">
-              {SLIDES.map((_, idx) => (
-                <div 
-                  key={idx} 
-                  className={`w-2 h-2 rounded-full transition-all ${idx === currentSlideIndex ? 'bg-indigo-600 w-4' : 'bg-slate-300'}`}
-                />
-              ))}
-           </div>
+        {/* Slide Indicator Dots - Hide on small screens, adjust size */}
+        {currentSlide.type !== SlideType.COVER && (
+          <div className="hidden lg:flex gap-1.5 overflow-x-auto max-w-[50%] px-2">
+            {SLIDES.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlideIndex(idx)}
+                className={`w-2 h-2 md:w-3 md:h-3 rounded-full transition-all shrink-0 ${idx === currentSlideIndex ? 'bg-ocean-600 scale-125' : 'bg-slate-300 hover:bg-ocean-300'}`}
+              />
+            ))}
+          </div>
+        )}
 
-           <button 
-             onClick={nextSlide}
-             disabled={currentSlideIndex === SLIDES.length - 1}
-             className="px-8 py-3 rounded-lg font-bold bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200 disabled:opacity-50 disabled:shadow-none transition-all flex items-center gap-2 transform active:scale-95"
-           >
-             NEXT →
-           </button>
-        </footer>
-      )}
+        <button
+          onClick={nextSlide}
+          disabled={currentSlideIndex === SLIDES.length - 1}
+          className="flex items-center gap-1 md:gap-2 px-3 md:px-6 py-2 md:py-3 rounded-lg font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed bg-ocean-600 text-white hover:bg-ocean-700 shadow-md text-sm md:text-base"
+        >
+          <span>Next</span>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </footer>
     </div>
   );
 };
