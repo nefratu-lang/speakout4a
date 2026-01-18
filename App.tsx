@@ -4,17 +4,15 @@ import { SlideType } from './types';
 import { 
   CoverSlide, 
   ObjectivesSlide, 
-  VocabularySlide,
-  ReadingSlide,
-  GrammarSlide,
-  MatchingSlide,
+  VocabularySlide, 
+  ReadingSlide, 
+  GrammarSlide, 
+  MatchingSlide, 
   DrillSlide
 } from './components/SlideComponents';
-import AITutor from './components/AITutor';
 
 const App = () => {
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
-  const [showTutor, setShowTutor] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false); // Tam Ekran Durumu
 
   const currentSlide = SLIDES[currentSlideIndex];
@@ -67,7 +65,7 @@ const App = () => {
 
   const renderSlideContent = () => {
     switch(currentSlide.type) {
-      // Kapak Sayfasına onNext prop'unu iletiyoruz
+      // Kapak Sayfasına onNext prop'unu iletiyoruz (Tıklayınca geçmesi için)
       case SlideType.COVER:
         return <CoverSlide data={currentSlide} onNext={nextSlide} />;
       case SlideType.OBJECTIVES:
@@ -90,7 +88,7 @@ const App = () => {
   return (
     <div className="w-full h-screen flex flex-col bg-slate-100 font-sans overflow-hidden text-slate-800 relative">
       
-      {/* --- FULLSCREEN BUTTON (Sağ Üst) --- */}
+      {/* --- FULLSCREEN BUTTON (Sağ Üst - Her Zaman Görünür) --- */}
       <button 
         onClick={toggleFullscreen}
         className="fixed top-3 right-4 z-50 p-2 bg-white/90 hover:bg-white backdrop-blur-sm text-slate-700 rounded-full shadow-lg border border-slate-200 transition-all active:scale-95"
@@ -103,7 +101,7 @@ const App = () => {
         )}
       </button>
 
-      {/* Header (Hidden on Cover) */}
+      {/* Header (Kapak Sayfasında Gizli) */}
       {currentSlide.type !== SlideType.COVER && (
         <header className="bg-white border-b border-slate-200 h-16 flex items-center justify-between px-6 shadow-sm shrink-0 z-20">
            <div className="flex items-center gap-3">
@@ -117,17 +115,6 @@ const App = () => {
               <div className="text-slate-500 font-mono text-sm bg-slate-100 px-3 py-1 rounded mr-12 md:mr-0">
                 {currentSlideIndex + 1} / {SLIDES.length}
               </div>
-              <button 
-                onClick={() => setShowTutor(!showTutor)}
-                className={`
-                  p-2 rounded-full transition-all duration-300
-                  ${showTutor ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'bg-slate-100 text-slate-500 hover:bg-indigo-100'}
-                `}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-              </button>
            </div>
         </header>
       )}
@@ -145,16 +132,9 @@ const App = () => {
       {/* Main Content */}
       <main className="flex-1 overflow-hidden relative">
         {renderSlideContent()}
-        
-        {/* AI Tutor Overlay */}
-        <AITutor 
-          isOpen={showTutor} 
-          onClose={() => setShowTutor(false)} 
-          currentSlide={currentSlide}
-        />
       </main>
 
-      {/* Navigation Footer (Hidden on Cover) */}
+      {/* Navigation Footer (Kapak Sayfasında Gizli) */}
       {currentSlide.type !== SlideType.COVER && (
         <footer className="bg-white border-t border-slate-200 px-6 py-4 shrink-0 z-20 flex justify-between items-center">
            <button 
